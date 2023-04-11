@@ -1,0 +1,108 @@
+th, td{
+    border: 1px solid black;
+    padding: 0;
+}
+
+table{
+    width: 1090px;
+    display: block;
+}
+ 
+.main__head{
+    display: flex;
+    justify-content: space-between;
+}
+
+.about-head{
+    display: flex;
+    flex-direction: column;
+    width: 260px;
+    th{
+        font-size: 24px;
+    }
+    .about-head__time{
+        height: 46px;
+        padding-top: 17px;
+    }
+
+}
+
+.data-order{
+    display: flex;
+    justify-content: space-between;
+    tr{
+        th{
+            width: 200px;
+        }
+        .data{
+            width: 320px;
+        }
+    }
+}
+
+.collectro{
+    display: block;
+}
+.name-collector{
+    width: 300px;
+}
+
+.name{
+    width: 300px;
+    height: 125px;
+}
+
+h2{
+    font-size: 16px;
+}
+
+.head-body{
+    display: flex;
+    flex-direction: column;
+    tr{
+        width: 1088px;
+    }
+    .order-name{
+        width: 1088px;
+        justify-content: space-between;
+        h1{
+            width: 1080px;
+        }
+        .address{
+            width: 887px;
+        }
+    }
+
+}
+
+.about-product{
+    display: flex;
+    justify-content: space-around;
+    .params, .complete{
+        display: flex;
+        flex-direction: column;
+        width: 300px;
+        h3{
+            width: 300px;
+        }
+        th{
+            width: 150px;
+        }
+    }
+}
+
+.note{
+    display: flex;
+    flex-direction: column;
+    width: 500px;
+   
+    margin: 0 auto;
+    margin-top: 100px;
+    tr{
+        width: 500px;
+        display: flex;
+        th{
+            width: 500px;
+        }
+    }
+}

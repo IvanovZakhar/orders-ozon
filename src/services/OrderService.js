@@ -2,16 +2,50 @@ import {useHttp} from '../hooks/http.hook';
 
 const useOrderService = () => {
     const {loading, request, error, clearError} = useHttp();
+ 
+    const bodySChema = {
+        "dir": "ASC",
+        "filter": {
+            "cutoff_from": "2023-04-13T00:00:00.000Z",
+            "cutoff_to": "2023-04-13T13:00:00Z",
+            "delivery_method_id": [],
+            "provider_id": [],
+            "status": "awaiting_deliver",
+            "warehouse_id": []
+        },
+        "limit": 100,
+        "offset": 0,
+        "with": {
+            "analytics_data": true,
+            "barcodes": true,
+            "financial_data": true,
+            "translit": true
+        }
+    }
+    
+    const formData = JSON.stringify(bodySChema)
 
-    const _apiBase = 'https://gateway.marvel.com:443/v1/public/';
-    const _apiKey = 'apikey=baaab7750b9c96f0a5da18949146680e';
-    const _baseOffset = 210;
-
-    const getAllOrders = async (offset = _baseOffset) => {
-        const res = await request(`https://api-seller.ozon.ru/v3/posting/fbs/unfulfilled/list`);
-        console.log(res)
+   const headersOzon = {  
+        'Client-Id': '634359' ,
+         
+     }
+    const getAllOrders = async () => {
+        const res = await request(`https://api-seller.ozon.ru/v3/posting/fbs/unfulfilled/list`, 'POST', formData, headersOzon);
+     return transformProduct(res.result.postings[0].products[0].offer_id)
+        console.log(res.result.postings[0].products[0].offer_id)
     }
 
+    const getInfoProducts = async () => {
+        const res = await request(`http://localhost:3001/product`, 'GET');
+        return res;
+    }
+
+    const transformProduct = (comics) => {
+        return{
+         product: comics,
+ 
+        } 
+     }
     
 
     const _transformComics = (comics) => {
@@ -26,7 +60,7 @@ const useOrderService = () => {
        } 
     }
 
-    return {loading, error, clearError, getAllOrders }
+    return {loading, error, clearError, getAllOrders, getInfoProducts }
 }
 
 export default useOrderService;

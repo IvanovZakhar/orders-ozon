@@ -19,33 +19,10 @@ export const useHttp = () => {
     //     }
     // }
 
-    const bodySChema = {
-        "dir": "ASC",
-        "filter": {
-            "cutoff_from": "2023-04-13T00:00:00.000Z",
-            "cutoff_to": "2023-04-13T13:00:00Z",
-            "delivery_method_id": [],
-            "provider_id": [],
-            "status": "awaiting_deliver",
-            "warehouse_id": []
-        },
-        "limit": 100,
-        "offset": 0,
-        "with": {
-            "analytics_data": true,
-            "barcodes": true,
-            "financial_data": true,
-            "translit": true
-        }
-    }
 
-    const formData = JSON.stringify(bodySChema)
 
-    const request = useCallback( async (url, method = 'POST', body = formData , 
-    headers = {  
-        'Client-Id': '634359' ,
-        
-     }) => {
+    const request = useCallback( async (url, method = 'POST', body = null , 
+    headers = {'Content-Type': 'application/json'}) => {
         setLoading(true);
         try{
             const response = await fetch(url, {method, body, headers});

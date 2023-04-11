@@ -1,13 +1,19 @@
 import useOrderService from '../../services/OrderService'
 import Table from '../Table/Table';
-import { useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import './App.css';
 
 function App() {
-  const  { getAllOrders } = useOrderService()
+  const [art, setArt] = useState('')
+  const [product, setProduct] = useState('')
+  const  { getAllOrders, getInfoProducts } = useOrderService()
  useEffect(() => {
-  getAllOrders()
+  getAllOrders().then(data => setArt(data.product))
+  getInfoProducts().then(data => setProduct(data))
  }, [])
+console.log(art)
+ const elem = product ? product.filter(item => item.article === art) : null;
+ console.log(elem)
   return (
     <div className="App">
         <Table/>

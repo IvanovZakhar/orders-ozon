@@ -1,22 +1,38 @@
 import useOrderService from '../../services/OrderService'
 import Table from '../Table/Table';
+import ListOrder from '../list-order/ListOrder';
 import { useState, useEffect } from 'react';
 import './App.css';
 
 function App() {
-  const [art, setArt] = useState('')
+  const [orders, setOrders] = useState('')
   const [product, setProduct] = useState('')
   const  { getAllOrders, getInfoProducts } = useOrderService()
  useEffect(() => {
-  getAllOrders().then(data => setArt(data.product))
-  getInfoProducts().then(data => setProduct(data))
+  const arr = []
+  getAllOrders().then(data => {
+    setOrders(data)
+    getInfoProducts(data).then(data => {
+ 
+   data.forEach((item, i) => item.then((data) => {
+    arr[i] = data[0]
+    arr[i].postingNumber = data.postingNumber;
+    arr[i].date = data.date;
+    arr[i].price = data.price
+    setProduct([arr])
+  }))
+ 
+  })})
+
+
  }, [])
-console.log(art)
- const elem = product ? product.filter(item => item.article === art) : null;
- console.log(elem)
+ 
+ 
+  
   return (
     <div className="App">
-        <Table/>
+      <ListOrder props={orders}/>
+        {/* <Table props={product}/> */}
     </div>
   );
 }

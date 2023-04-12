@@ -1,0 +1,26 @@
+th, td{
+    border: 1px solid black;
+    padding: 0;
+}
+
+table{
+    width: 1550px;
+    height: 1050px;
+    display: block;
+    border: none;
+}
+
+.art{
+    width: 150px;
+}
+.warehouse{
+    font-weight: bold;
+    font-size: 16px;
+}
+
+.productName{
+    font-weight: bold;
+    font-size: 16px;
+    text-align: left;
+    height: 40px;
+}

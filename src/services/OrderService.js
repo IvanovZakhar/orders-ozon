@@ -1,15 +1,13 @@
-import { useState } from 'react';
 import {useHttp} from '../hooks/http.hook';
 
 const useOrderService = () => {
-    const [data, setData] = useState('');
     const {loading, request, error, clearError} = useHttp();
  
     const bodySChema = {
         "dir": "ASC",
         "filter": {
-            "cutoff_from": "2023-04-18T00:00:00.000Z",
-            "cutoff_to": "2023-04-18T13:00:00Z",
+            "cutoff_from": "2023-04-14T00:00:00.000Z",
+            "cutoff_to": "2023-04-14T13:00:00Z",
             "delivery_method_id": [],
             "provider_id": [],
             "status": "awaiting_deliver",
@@ -29,7 +27,7 @@ const useOrderService = () => {
 
    const headersOzon = {  
         'Client-Id': '634359' ,
-      
+    
      }
     const getAllOrders = async () => {
   
@@ -64,24 +62,8 @@ const useOrderService = () => {
         
         } 
      }
-     const transinfoProduct = (product) => {
-        console.log(product)
-        // return{
-           
-        // } 
-     }
 
-    const _transformComics = (comics) => {
-       return{
-        id: comics.id,
-        title: comics.title,
-        description: comics.description || 'There is no description',
-        pageCount: comics.pageCount ? `${comics.pageCount} p.` : 'No information about the number of pages',
-        language: comics.textObjects.language || 'en-us',
-        price: comics.prices[0].price ? `${comics.prices[0].price}$` : 'not available',
-        img: comics.images[0] ? `${comics.images[0].path}.${comics.images[0].extension}` : 'none'
-       } 
-    }
+
 
     return {loading, error, clearError, getAllOrders, getInfoProducts }
 }

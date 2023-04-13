@@ -9,38 +9,75 @@ const ListOrder = (props) => {
             quantity,
             warehouse} = item;
             return(
-                <>
-                    <tr key={i}>
-                        <td>{i+=1}</td>
-                        <td>{postingNumber}</td>
-                        <td>{`${date.slice(8, 10)}.${date.slice(5, 7)}.${date.slice(0, 4)}`}</td>
-                        <td className='productName'>{productName}</td>
-                        <td>{productArt}</td>
-                        <td>{productPrice.slice(0, -7)}</td>
-                        <td>{quantity}</td>
-                        <td className='warehouse'>{warehouse === "Крупногабарит" ? "П" : null}</td>
-                    </tr>
-                </>
+            
+                <tr key={item.postingNumber}>
+                    <td>{i+=1}</td>
+                    <td>{postingNumber}</td>
+                    <td>{`${date.slice(8, 10)}.${date.slice(5, 7)}.${date.slice(0, 4)}`}</td>
+                    <td className='productName'>{productName}</td>
+                    <td>{productArt}</td>
+                    <td>{productPrice.slice(0, -7)}</td>
+                    <td>{quantity}</td>
+                    <td className='warehouse'>{warehouse === "Крупногабарит" ? "П" : null}</td>
+                </tr>
+                 
             )
     }) : null;
-    return( 
-        <table className="list-order">
-            <thead>
-                <tr>
-                    <th>№</th>
-                    <th>Номер отправления</th>
-                    <th>Дата отгрузки</th>
-                    <th>Наименование товара</th>
-                    <th className='art'>Артикул</th>
-                    <th>Стоимость</th>
-                    <th>Кол-во шт.</th>
-                    <th>Склад</th>
-                </tr>
-            </thead>
-            <tbody>
-                {elem}
-            </tbody>
-        </table>
+
+
+   function colculateTotalProducts (product) {
+    console.log(product)
+        const compl = product ? product.filter(item => item.productArt === 'AR752031957-06' ).map(item => {
+            return {productName: 'Крепежный кронштейн ( коннектор) 1 шт. для беседок и пергол ARSENAL PERGOLA модель AR75112Ц957-06', quantity: 6}
+        }) : null;
+       const newElem = product ? product.concat(compl) : null;
+        const summary = newElem ? newElem.reduce((accumulator, item) => Object.assign(accumulator, {
+            [item.productName]: (accumulator[item.productName] || 0) + item.quantity
+        }), {}) : null
+        console.log(summary)
+       if(summary) {return Object.entries(summary).map(([key, value]) => (
+            <tr key={key}>
+              <td>{key}</td>
+              <td>{value}</td>
+            </tr>
+          ))} 
+             
+   }
+const productTotal = colculateTotalProducts(props.props)
+    
+    return(
+        <>
+            <table className="list-order">
+                <thead>
+                    <tr>
+                        <th>№</th>
+                        <th>Номер отправления</th>
+                        <th>Дата отгрузки</th>
+                        <th>Наименование товара</th>
+                        <th className='art'>Артикул</th>
+                        <th>Стоимость</th>
+                        <th>Кол-во шт.</th>
+                        <th>Склад</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {elem}
+                </tbody>
+            
+            </table>
+            {/* <table className="list-order">
+                <thead>
+                    <tr>
+                        <th>Наименование товара</th> 
+                        <th>Кол-во шт.</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {productTotal}
+                </tbody>
+            
+            </table> */}
+        </>
     )
 }
 

@@ -10,7 +10,7 @@ const useOrderService = () => {
             "cutoff_to": "2023-04-14T13:00:00Z",
             "delivery_method_id": [],
             "provider_id": [],
-            "status": "awaiting_deliver",
+            "status": "delivering",
             "warehouse_id": []
         },
         "limit": 100,
@@ -27,7 +27,7 @@ const useOrderService = () => {
 
    const headersOzon = {  
         'Client-Id': '634359' ,
-    
+        
      }
     const getAllOrders = async () => {
   

@@ -1,22 +1,18 @@
 import './Table.scss'
 
 function Table(props) {
-    
+ 
     const elem = props.props[0] ? props.props[0].map(item => {
         const {Column14, Column15, Column16, 
              Column17, Column18, Column19, Column20, Column22, 
              Column23, Column24, Column25, Station, article, 
              date, eyelet, height, loops, name, number_of_roll,
              postingNumber, price, roll, screws, weight, width, Column21} = item;
-
-            //  const today = new Date();
-            //  const dd = String(today.getDate()).padStart(2, '0');
-            //  const mm = String(today.getMonth() + 1).padStart(2, '0'); //January is 0!
-            //  const yyyy = today.getFullYear();
+ 
              
      
         return (
-            <table>
+            <table className='order'>
                 <thead>
         
                 <tr className='main__head'>

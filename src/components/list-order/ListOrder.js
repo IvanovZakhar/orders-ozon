@@ -27,14 +27,29 @@ const ListOrder = (props) => {
 
    function colculateTotalProducts (product) {
     console.log(product)
-        const compl = product ? product.filter(item => item.productArt === 'AR752031957-06' ).map(item => {
-            return {productName: 'Крепежный кронштейн ( коннектор) 1 шт. для беседок и пергол ARSENAL PERGOLA модель AR75112Ц957-06', quantity: 6}
-        }) : null;
+        const compl = product ? 
+        product.filter(item => item.productArt === 'AR752031957-06' )
+        .map(item => {
+           const elem = [
+                    {productName: "Крепежный кронштейн ( коннектор) 1 шт. для беседок и пергол ARSENAL PERGOLA модель AR75112Ц957-06", quantity: 6},
+                    {productName: "Крепежный кронштейн ( коннектор) 2 шт.  для беседок и пергол ARSENAL PERGOLA модель AR75312У957-06", quantity: 2},
+                    {productName: "Крепежный кронштейн ( коннектор) 1 шт.  для беседок и пергол ARSENAL PERGOLA модель AR75312T957-06", quantity: 2}]
+            return elem
+                    
+        })  
+        .reduce((accumulator, item) => {
+           return item.concat(accumulator)
+        }) : [{}];
+
+
        const newElem = product ? product.concat(compl) : null;
+      
+
         const summary = newElem ? newElem.reduce((accumulator, item) => Object.assign(accumulator, {
+            
             [item.productName]: (accumulator[item.productName] || 0) + item.quantity
         }), {}) : null
-        console.log(summary)
+    
        if(summary) {return Object.entries(summary).map(([key, value]) => (
             <tr key={key}>
               <td>{key}</td>
@@ -62,21 +77,22 @@ const productTotal = colculateTotalProducts(props.props)
                 </thead>
                 <tbody>
                     {elem}
+                    
                 </tbody>
             
             </table>
-            {/* <table className="list-order">
+            <table className="list-order">
                 <thead>
                     <tr>
                         <th>Наименование товара</th> 
-                        <th>Кол-во шт.</th>
+                        <th>Кол-во</th>
                     </tr>
                 </thead>
                 <tbody>
                     {productTotal}
                 </tbody>
             
-            </table> */}
+            </table>
         </>
     )
 }

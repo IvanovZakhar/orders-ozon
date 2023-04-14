@@ -1,21 +1,32 @@
 th, td{
     border: 1px solid black;
     padding: 0;
+    margin: 0;
 }
 
-table{
+.list-order{
     width: 1550px;
-    height: 1050px;
+ 
+    margin-top: 30px;
     display: block;
     border: none;
 }
+.total-text{
+    font-size: 30px;
+    text-align: left;
+    margin: 20px ;
+}
 
+.list-order:last-child{
+    margin: 0;
+}
+ 
 .art{
     width: 150px;
 }
 .warehouse{
     font-weight: bold;
-    font-size: 16px;
+    font-size: 12px;
 }
 
 .productName{

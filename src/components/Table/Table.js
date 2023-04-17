@@ -1,6 +1,8 @@
+import NavLink from '../NavLink/Nav-link';
 import './Table.scss'
 
 function Table(props) {
+    console.log(props)
  
     const elem = props.props[0] ? props.props[0].map(item => {
         const {Column14, Column15, Column16, 
@@ -12,6 +14,7 @@ function Table(props) {
              
      
         return (
+         
             <table className='order'>
                 <thead>
         
@@ -141,7 +144,10 @@ function Table(props) {
     }) : null;
     return (
         <>
-            {elem}
+
+                <NavLink/>
+                {elem}
+       
         </>
 )}
     

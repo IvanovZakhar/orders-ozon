@@ -6,11 +6,11 @@ const useOrderService = () => {
     const bodySChema = {
         "dir": "ASC",
         "filter": {
-            "cutoff_from": "2023-04-14T00:00:00.000Z",
-            "cutoff_to": "2023-04-14T13:00:00Z",
+            "cutoff_from": "2023-04-18T00:00:00.000Z",
+            "cutoff_to": "2023-04-18T13:00:00Z",
             "delivery_method_id": [],
             "provider_id": [],
-            "status": "delivering",
+            "status": "awaiting_deliver",
             "warehouse_id": []
         },
         "limit": 100,

@@ -1,4 +1,4 @@
-th, td{
+.list-order__item{
     border: 1px solid black;
     padding: 0;
     margin: 0;
@@ -18,7 +18,12 @@ th, td{
 }
 
 .list-order:last-child{
-    margin: 0;
+    margin: 0 auto;
+    margin-top: 50px;
+}
+
+h2{
+    margin: 0 auto;
 }
  
 .art{

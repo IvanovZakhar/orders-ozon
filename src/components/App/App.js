@@ -3,6 +3,18 @@ import Table from '../Table/Table';
 import ListOrder from '../list-order/ListOrder';
 import { useState, useEffect } from 'react';
 import './App.css';
+import NavLink from '../NavLink/Nav-link';
+
+import React from "react";
+import { createRoot } from "react-dom/client";
+import {
+  createBrowserRouter,
+  RouterProvider,
+  Route,
+  Link,
+} from "react-router-dom";
+
+
 
 function App() {
   const [orders, setOrders] = useState('')
@@ -28,11 +40,34 @@ function App() {
  }, [])
  
  
+ const router = createBrowserRouter([
+  {
+    path: "/",
+    element: (
+      <div>
+          <NavLink/>
+      </div>
+    ),
+  },
+  {
+    path: "list-order",
+    element: <ListOrder props={orders}/>,
+  },
+  {
+    path: "table",
+    element:  <Table props={product}/>,
+  },
+]);
+
+createRoot(document.getElementById("root")).render(
+  <RouterProvider router={router} />
+);
   
   return (
     <div className="App">
+      <NavLink/>
       <ListOrder props={orders}/>
-        {/* <Table props={product}/> */}
+        <Table props={product}/>
     </div>
   );
 }

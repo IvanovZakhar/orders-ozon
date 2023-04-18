@@ -1,17 +1,17 @@
 import NavLink from '../NavLink/Nav-link';
 import './Table.scss'
 
-function Table(props) {
-    console.log(props)
+function Table({props, date, setDate, onLoadingProducts}) {
  
-    const elem = props.props[0] ? props.props[0].map(item => {
+ 
+    const elem = props[0] ? props[0].map(item => {
         const {Column14, Column15, Column16, 
              Column17, Column18, Column19, Column20, Column22, 
              Column23, Column24, Column25, Station, article, 
              date, eyelet, height, loops, name, number_of_roll,
              postingNumber, price, roll, screws, weight, width, Column21} = item;
  
-             
+            
      
         return (
          
@@ -145,8 +145,8 @@ function Table(props) {
     return (
         <>
 
-                <NavLink/>
-                {elem}
+                <NavLink date={date} setDate={setDate} onLoadingProducts={onLoadingProducts}/>
+                {elem ? elem : <h2>Введите дату</h2>}
        
         </>
 )}

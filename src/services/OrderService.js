@@ -3,33 +3,33 @@ import {useHttp} from '../hooks/http.hook';
 const useOrderService = () => {
     const {loading, request, error, clearError} = useHttp();
  
-    const bodySChema = {
-        "dir": "ASC",
-        "filter": {
-            "cutoff_from": "2023-04-18T00:00:00.000Z",
-            "cutoff_to": "2023-04-18T13:00:00Z",
-            "delivery_method_id": [],
-            "provider_id": [],
-            "status": "awaiting_deliver",
-            "warehouse_id": []
-        },
-        "limit": 100,
-        "offset": 0,
-        "with": {
-            "analytics_data": true,
-            "barcodes": true,
-            "financial_data": true,
-            "translit": true
-        }
-    }
+    // const bodySChema = {
+    //     "dir": "ASC",
+    //     "filter": {
+    //         "cutoff_from": "2023-04-20T00:00:00.000Z",
+    //         "cutoff_to": "2023-04-20T13:00:00Z",
+    //         "delivery_method_id": [],
+    //         "provider_id": [],
+    //         "status": "awaiting_deliver",
+    //         "warehouse_id": []
+    //     },
+    //     "limit": 100,
+    //     "offset": 0,
+    //     "with": {
+    //         "analytics_data": true,
+    //         "barcodes": true,
+    //         "financial_data": true,
+    //         "translit": true
+    //     }
+    // }
     
-    const formData = JSON.stringify(bodySChema)
+    // const formData = JSON.stringify(bodySChema)
 
    const headersOzon = {  
         'Client-Id': '634359' ,
-        
+     
      }
-    const getAllOrders = async () => {
+    const getAllOrders = async (formData) => {
   
         const res = await request(`https://api-seller.ozon.ru/v3/posting/fbs/unfulfilled/list`, 'POST', formData, headersOzon);
         console.log(res)

@@ -1,1 +1,16 @@
 @import "~bootstrap/scss/bootstrap";
+
+$theme-colors: (
+    "info": tomato,
+    "danger": teal );
+.button-nav{
+    position: fixed;
+    left: 10px;
+    top: 1px;
+    border-radius: 50%;
+    border: 0;
+}
+
+.form-control{
+    width: 200px;
+}

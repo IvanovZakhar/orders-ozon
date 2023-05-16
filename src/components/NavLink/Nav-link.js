@@ -31,13 +31,13 @@ const NavLink = ( {onLoadingProducts, date, setDate} ) => {
           </Offcanvas.Header>
             <Offcanvas.Body>
             <Navbar bg="light" variant="light">
-              <Container>
+              
                   <Navbar.Brand href="/">Список заказов</Navbar.Brand>
                   <Nav className="me-auto">
                     <Nav.Link href="/table">Наряды</Nav.Link>
                   </Nav>
                 
-              </Container>
+             
               
             </Navbar>
               <Form>
@@ -48,6 +48,7 @@ const NavLink = ( {onLoadingProducts, date, setDate} ) => {
                  
                   <Button variant="primary"  
                     onClick={() => onLoadingProducts()}
+                    type="submit"
                   >
                    Ок
                   </Button>

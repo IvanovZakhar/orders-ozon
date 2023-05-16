@@ -2,7 +2,7 @@ import NavLink from '../NavLink/Nav-link';
 import './ListOrder.scss'
 
 const ListOrder = ({props, onLoadingProducts, date, setDate}) => {
-    console.log(date)
+ 
     const elem = props ? props.map((item, i) => {
         const {date,
             postingNumber,
@@ -10,6 +10,7 @@ const ListOrder = ({props, onLoadingProducts, date, setDate}) => {
             productPrice,
             quantity,
             warehouse} = item;
+  
             return(
    
                 <tr className='list-order__item' key={item.postingNumber}>
@@ -25,6 +26,7 @@ const ListOrder = ({props, onLoadingProducts, date, setDate}) => {
                
             )
     }) : null;
+ 
 
 
    function colculateTotalProducts (product) {
@@ -45,31 +47,78 @@ const ListOrder = ({props, onLoadingProducts, date, setDate}) => {
 
 
     //    const newElem = product ? product.concat(compl) : null;
-      
 
-        const summary = product ? product.reduce((accumulator, item) => Object.assign(accumulator, {
+        // const compl = product.filter(item => {
+        //     if(item.productArt === 'AR752031957-06'){
+        //         return
+        //     } 
+        // })
+        // console.log(compl) 
+        // const newElem = product.concat(compl);
+        // console.log(newElem) 
+
+        
+
+        // function colculateComplProduct (items, elem) {
+
+        //     const resFilter = items.filter(item => {
+              
+        //         if(item.productArt === elem){
+        //             return item
+        //         } 
+
+        //     })
+        //     console.log(resFilter)
+
+        //     const resCompl = resFilter ? resFilter.map(item => {
+        //    const elem = [
+        //             {productName: "Крепежный кронштейн ( коннектор) 1 шт. для беседок и пергол ARSENAL PERGOLA модель AR75112Ц957-06", quantity: 6},
+        //             {productName: "Крепежный кронштейн ( коннектор) 2 шт.  для беседок и пергол ARSENAL PERGOLA модель AR75312У957-06", quantity: 2},
+        //             {productName: "Крепежный кронштейн ( коннектор) 1 шт.  для беседок и пергол ARSENAL PERGOLA модель AR75312T957-06", quantity: 2}]
+        //     return elem
+                    
+        // })
+        // .reduce((accumulator, item) => {
+        //    return item.concat(accumulator)
+        // }) 
+        // : [];
+
+        //  return resCompl;
             
-            [item.productName]: (accumulator[item.productName] || 0) + item.quantity
-        }), {}) : null
+        // }
+
+        // const compl = colculateComplProduct(product, 'AR74KE23957-0')
+
+        
+        // console.log(compl)
+         
+
+        const summary = product.reduce((accumulator, item) => Object.assign(accumulator, {
+            
+            [item.productArt]: (accumulator[item.productArt] || 0) + item.quantity
+        }), {})
+
+       
     
-       if(summary) {return Object.entries(summary).map(([key, value]) => (
+     return Object.entries(summary).map(([key, value]) => (
             <tr className='list-order__item' key={key}>
               <td className='list-order__item'>{key}</td>
               <td className='list-order__item'>{value}</td>
             </tr>
-          ))} 
+          ))
              
    }
-const productTotal = colculateTotalProducts(props)
-
+const productTotal = props ? colculateTotalProducts(props) : null;
+   const dateOrders = props[0] ? `${props[0].date.slice(8, 10)}.${props[0].date.slice(5, 7)}.${props[0].date.slice(0, 4)}` : 'Нет отправлений';
+  
     return(
         <>
              <NavLink onLoadingProducts={onLoadingProducts} date={date} setDate={setDate}/>
-            {elem ? <Page elem={elem} productTotal={productTotal}/> : <h2>Введите дату</h2>}</>
+            {elem ? <Page elem={elem} productTotal={productTotal} dateOrders={dateOrders}/> : <h2>Введите дату</h2>}</>
     )
 }
 
-const Page = ({elem, productTotal}) => {
+const Page = ({elem, productTotal, dateOrders}) => {
     return(
         <>
                
@@ -79,7 +128,7 @@ const Page = ({elem, productTotal}) => {
                             <th className='list-order__item'>№</th>
                             <th className='list-order__item'>Номер отправления</th>
                             <th className='list-order__item'>Дата отгрузки</th>
-                            <th className='list-order__item'>Наименование товара</th>
+                            <th className='list-order__item date'>{dateOrders}</th>
                             <th className='art list-order__item'>Артикул</th>
                             <th className='list-order__item'>Стоимость</th>
                             <th className='list-order__item'>Кол-во шт.</th>
@@ -97,7 +146,7 @@ const Page = ({elem, productTotal}) => {
                     <h2>Итого</h2>
                     <thead>
                         <tr className='list-order__item'>
-                            <th className='list-order__item'>Наименование товара</th> 
+                            <th className='list-order__item'>Артикул</th> 
                             <th className='list-order__item'>Кол-во</th>
                         </tr>
                     </thead>

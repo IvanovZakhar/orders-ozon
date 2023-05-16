@@ -2,55 +2,68 @@ import {useHttp} from '../hooks/http.hook';
 
 const useOrderService = () => {
     const {loading, request, error, clearError} = useHttp();
- 
-    // const bodySChema = {
-    //     "dir": "ASC",
-    //     "filter": {
-    //         "cutoff_from": "2023-04-20T00:00:00.000Z",
-    //         "cutoff_to": "2023-04-20T13:00:00Z",
-    //         "delivery_method_id": [],
-    //         "provider_id": [],
-    //         "status": "awaiting_deliver",
-    //         "warehouse_id": []
-    //     },
-    //     "limit": 100,
-    //     "offset": 0,
-    //     "with": {
-    //         "analytics_data": true,
-    //         "barcodes": true,
-    //         "financial_data": true,
-    //         "translit": true
-    //     }
-    // }
-    
-    // const formData = JSON.stringify(bodySChema)
 
    const headersOzon = {  
-        'Client-Id': '634359' ,
-     
+        'Client-Id': `${process.env.CLIENT_ID}` ,
+        'Api-Key': `${process.env.API_KEY}`
      }
     const getAllOrders = async (formData) => {
   
         const res = await request(`https://api-seller.ozon.ru/v3/posting/fbs/unfulfilled/list`, 'POST', formData, headersOzon);
-        console.log(res)
+        
         return res.result.postings.map(transformProduct)
+    }
+
+    const getAllProducts = async () => {
+        const res = await request(`https://server-market-arsenal.vercel.app/products-for-orders`, 'GET');
+        console.log(res)
+        return res;
+    }
+
+    const getBasketsProduct = async () => {
+        const res = await request(`http://localhost:5000/Sqlconn?t=3`, 'POST', 'pass=Ghjcnjqgfhjkm', { 'Content-Type': 'application/x-www-form-urlencoded'})
+
+        return res;
     }
 
     const getInfoProducts = async (article) => {
 
         const res = article.map(async (item) => {
-          const res = await request(`http://localhost:3001/product?article=${item.productArt}`, 'GET');
+           
+          const res = await request(`https://server-market-arsenal.vercel.app/products-for-orders?article=${item.productArt}`, 'GET');
+      
           res.postingNumber = item.postingNumber;
           res.date = item.date;
           res.price = item.productPrice
-          return res;
+          res.warehouse = item.warehouse
+          res.quantity = item.quantity
+          return res;  
         })
         return res 
 
     }
+
+    const updateData = async (url,method, body) => {
+        const res = await request(url, method, body);
+    }
+
+    const getBaskets = async () => {
+        const res = await request(`http://localhost:3001/baskets`, 'GET');
+        return res 
+       
+    }
+
+    const transformBaskets = (baskets) => {
+         
+        return{
+            art: baskets.articles,
+            sku: baskets.sku_id
+        } 
+     } 
+    
  
     const transformProduct = (product) => {
- 
+        
         return{
             postingNumber: product.posting_number,
             date: product.shipment_date,
@@ -65,7 +78,7 @@ const useOrderService = () => {
 
 
 
-    return {loading, error, clearError, getAllOrders, getInfoProducts }
+    return {loading, error, clearError, getAllOrders, getInfoProducts, getBaskets , getAllProducts, getBasketsProduct, updateData}
 }
 
 export default useOrderService;

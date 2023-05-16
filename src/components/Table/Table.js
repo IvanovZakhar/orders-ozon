@@ -1,20 +1,20 @@
 import NavLink from '../NavLink/Nav-link';
+import { useState } from 'react';
 import './Table.scss'
 
 function Table({props, date, setDate, onLoadingProducts}) {
- 
- 
+   console.log(props)
+
     const elem = props[0] ? props[0].map(item => {
         const {Column14, Column15, Column16, 
              Column17, Column18, Column19, Column20, Column22, 
              Column23, Column24, Column25, Station, article, 
              date, eyelet, height, loops, name, number_of_roll,
-             postingNumber, price, roll, screws, weight, width, Column21} = item;
- 
-            
+             postingNumber, price, roll, screws, weight, width, Column21, warehouse, quantity} = item;
+
+         
      
         return (
-         
             <table className='order'>
                 <thead>
         
@@ -60,11 +60,13 @@ function Table({props, date, setDate, onLoadingProducts}) {
                 <tbody>
                     <tr className='head-body'>
                         <tr className='order-name'>
-                            <th><h1>{name}</h1></th>
+                            <th><h1>{name}<span>x{quantity}</span></h1></th>
+                            {/* <th></th> */}
                         </tr>
+ 
                         <tr className='order-name'>
                             <th>Адрес склада/магазина</th>
-                            <th className='address'>{Column20 === 'ПАРГОЛОВО' ? ' Подгорная, 61, 1. ' :' Белоостровская улица, 10к1'}</th>
+                            <th className='address'>{warehouse === 'Крупногабарит' ? ' Подгорная, 61, 1. ' :' Белоостровская улица, 10к1'}</th>
                         </tr>
                     </tr>
         
@@ -106,38 +108,47 @@ function Table({props, date, setDate, onLoadingProducts}) {
                         </tr>
                     </tr>
                 </tr>
-        
-                <tr className='note'>
-                    
-                    <tr><th><h3>Примечание</h3></th> </tr>
-                    <tr>
-                        <th>{roll}</th> 
+       
+                <div> 
+                    <tr className='compl'> 
+                        <tr className='compl-name'><th><h3>Комплектация заказа</h3></th> </tr>
+                        
+                          <GetCompl quantity={quantity} article={article}/>
                     </tr>
-                    <tr>
-                        <th>{Column14}</th> 
+ 
+                    <tr className='note'>
+                        
+                        <tr><th><h3>Примечание</h3></th> </tr>
+                        <tr>
+                            <th>{roll}</th> 
+                        </tr>
+                        <tr>
+                            <th>{Column14}</th> 
+                        </tr>
+                        <tr>
+                            <th>{Column15}</th>
+                        </tr>
+                        <tr>
+                            <th>{Column16}</th>
+                        </tr>
+                        <tr>
+                            <th>{Column17}</th>
+                        </tr>
+                        <tr>
+                            <th>{Column18}</th>
+                        </tr>
+                        <tr>
+                            <th>{Column19}</th>
+                        </tr>
+                        <tr>
+                            <th>{Column20}</th>
+                        </tr>
+                        <tr>
+                            <th>-</th>
+                        </tr>
                     </tr>
-                    <tr>
-                        <th>{Column15}</th>
-                    </tr>
-                    <tr>
-                        <th>{Column16}</th>
-                    </tr>
-                    <tr>
-                        <th>{Column17}</th>
-                    </tr>
-                    <tr>
-                        <th>{Column18}</th>
-                    </tr>
-                    <tr>
-                        <th>{Column19}</th>
-                    </tr>
-                    <tr>
-                        <th>{Column20}</th>
-                    </tr>
-                    <tr>
-                        <th>-</th>
-                    </tr>
-                </tr>
+            
+                </div>
                 </tbody>
             </table>
         )
@@ -151,7 +162,7 @@ function Table({props, date, setDate, onLoadingProducts}) {
         </>
 )}
     
-    export default Table;
+export default Table;
 
 function getCurrentDate(separator='-'){
 
@@ -162,3 +173,14 @@ function getCurrentDate(separator='-'){
         
         return `${date}${separator}${month<10?`0${month}`:`${month}`}${separator}${year}`
         }
+
+function GetCompl({quantity, article}) {
+    const divs = Array.from({ length: quantity }, (_, i) => (
+        <tr key={i}>
+            <th>{article}</th> 
+            <th>1 шт.</th>
+        </tr>
+    ));
+    
+    return  divs;
+    }

@@ -4,6 +4,17 @@ th, td{
     text-align: center;
 }
 
+
+tbody{
+    div{
+        display: flex;
+        margin-top: 100px;
+        justify-content: space-around;
+        
+ 
+    }
+}
+
 .order{
     width: 1075px;
     height: 1535px;
@@ -98,6 +109,12 @@ h2{
             font-size: 22px;
             width: 900px;
         }
+        span{
+            border: 4px solid black;
+            font-size: 38px;
+            padding: 0 5px;
+            margin-left: 15px;
+        }
     }
 
 }
@@ -123,9 +140,7 @@ h2{
     display: flex;
     flex-direction: column;
     width: 500px;
-   
-    margin: 0 auto;
-    margin-top: 100px;
+ 
     tr{
         width: 500px;
         display: flex;
@@ -135,3 +150,28 @@ h2{
         }
     }
 }
+
+.compl{
+  display: flex;
+  flex-direction: column;
+  width: 300px; 
+
+
+    tr{
+        th:first-child{
+            width: 250px;
+          }
+          th:last-child{
+            width: 50px;
+          }
+    }
+    tr:first-child{
+        width: 300px;
+        th{
+            width: 300px;
+        }
+    }
+
+}
+
+ 

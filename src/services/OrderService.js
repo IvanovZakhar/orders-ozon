@@ -1,22 +1,11 @@
 import {useHttp} from '../hooks/http.hook';
 
 const useOrderService = () => {
-    const path = require('path');
-
-// Путь к файлу с ключами от корневой папки
-const keysPath = path.resolve(__dirname, '../../../keys.json');
-
-// Загрузка файла с ключами
-const keys = require(keysPath);
-
- 
-// Продолжайте использовать headersOzon в своем коде...
-
-    const {loading, request, error, clearError} = useHttp();
+   
 
     const headersOzon = {  
-        'Client-Id': keys.CLIENT_ID,
-        'Api-Key': keys.API_KEY
+        'Client-Id': process.CLIENT_ID,
+        'Api-Key': process.API_KEY
       };
       
     const getAllOrders = async (formData) => {

@@ -2,7 +2,8 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import App from './components/App/App';
 console.log(process.env.API_URL)
- 
+  
+console.log(process.env.CLIENT_ID)
 console.log(process.env.API_KEY)
 ReactDOM.render(
   <React.StrictMode>

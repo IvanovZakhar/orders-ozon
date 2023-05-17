@@ -8,7 +8,8 @@ import './App.css';
 
 function App() {
   console.log(process.env.API_URL)
- 
+  
+  console.log(process.env.CLIENT_ID)
   console.log(process.env.API_KEY)
   const [orders, setOrders] = useState('');
   const [product, setProduct] = useState('');

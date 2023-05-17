@@ -2,7 +2,9 @@ import {useHttp} from '../hooks/http.hook';
 
 const useOrderService = () => {
     const {loading, request, error, clearError} = useHttp();
-
+    console.log(process.env.CLIENT_ID)
+    console.log(typeof process.env.CLIENT_ID)
+    console.log(process.env.API_KEY)
    const headersOzon = {  
         'Client-Id': `${process.env.CLIENT_ID}` ,
         'Api-Key': `${process.env.API_KEY}`

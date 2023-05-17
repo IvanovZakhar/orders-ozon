@@ -7,6 +7,9 @@ import TestPage from '../TestPage/TestPage';
 import './App.css';
 
 function App() {
+  console.log(process.env.API_URL)
+ 
+  console.log(process.env.API_KEY)
   const [orders, setOrders] = useState('');
   const [product, setProduct] = useState('');
   const [allProducts, setAllProducts] = useState('');

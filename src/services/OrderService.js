@@ -2,14 +2,9 @@ import {useHttp} from '../hooks/http.hook';
 
 const useOrderService = () => {
     const {loading, request, error, clearError} = useHttp();
-    console.log(process.env.API_URL)
-    console.log(typeof process.env.CLIENT_ID)
-    console.log(process.env.API_KEY)
-   const headersOzon = {  
-        'Client-Id': `${process.env.CLIENT_ID}` ,
-        'Api-Key': `${process.env.API_KEY}`
-     }
-    const getAllOrders = async (formData) => {
+ 
+
+    const getAllOrders = async (formData, headersOzon) => {
   
         const res = await request(`https://api-seller.ozon.ru/v3/posting/fbs/unfulfilled/list`, 'POST', formData, headersOzon);
         
@@ -18,15 +13,11 @@ const useOrderService = () => {
 
     const getAllProducts = async () => {
         const res = await request(`https://server-market-arsenal.vercel.app/products-for-orders`, 'GET');
-        console.log(res)
+     
         return res;
     }
 
-    const getBasketsProduct = async () => {
-        const res = await request(`http://localhost:5000/Sqlconn?t=3`, 'POST', 'pass=Ghjcnjqgfhjkm', { 'Content-Type': 'application/x-www-form-urlencoded'})
-
-        return res;
-    }
+ 
 
     const getInfoProducts = async (article) => {
 
@@ -80,7 +71,7 @@ const useOrderService = () => {
 
 
 
-    return {loading, error, clearError, getAllOrders, getInfoProducts, getBaskets , getAllProducts, getBasketsProduct, updateData}
+    return {loading, error, clearError, getAllOrders, getInfoProducts, getBaskets , getAllProducts, updateData}
 }
 
 export default useOrderService;

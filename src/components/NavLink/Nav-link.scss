@@ -14,3 +14,12 @@ $theme-colors: (
 .form-control{
     width: 200px;
 }
+
+form{
+    width: 200px;
+}
+
+.forms{
+    display: flex;
+    justify-content: space-around;
+}

@@ -3,9 +3,9 @@ import { useState } from 'react';
 import './Table.scss'
 
 function Table({props, date, setDate, onLoadingProducts}) {
-   console.log(props)
+ 
 
-    const elem = props[0] ? props[0].map(item => {
+    const elem = props[0] ? props[0].map((item, i) => {
         const {Column14, Column15, Column16, 
              Column17, Column18, Column19, Column20, Column22, 
              Column23, Column24, Column25, Station, article, 
@@ -15,7 +15,7 @@ function Table({props, date, setDate, onLoadingProducts}) {
          
      
         return (
-            <table className='order'>
+            <table className='order' key={i}>
                 <thead>
         
                 <tr className='main__head'>
@@ -155,9 +155,8 @@ function Table({props, date, setDate, onLoadingProducts}) {
     }) : null;
     return (
         <>
-
-                <NavLink date={date} setDate={setDate} onLoadingProducts={onLoadingProducts}/>
-                {elem ? elem : <h2>Введите дату</h2>}
+            <NavLink date={date} setDate={setDate} onLoadingProducts={onLoadingProducts}/>
+            {elem ? elem : <h2>Введите дату</h2>}
        
         </>
 )}

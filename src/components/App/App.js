@@ -7,18 +7,18 @@ import TestPage from '../TestPage/TestPage';
 import './App.css';
 
 function App() {
-  console.log(process.env.API_URL)
-  
-  console.log(process.env.CLIENT_ID)
-  console.log(process.env.API_KEY)
+
   const [orders, setOrders] = useState('');
   const [product, setProduct] = useState('');
   const [allProducts, setAllProducts] = useState('');
   const [date, setDate] = useState('');
   const [baskets, setBaskets] = useState();
   const [basketsProduct, setBasketsProduct] = useState();
-  const { getAllOrders, getInfoProducts, getBaskets, getAllProducts, getBasketsProduct } = useOrderService();
+  const { getAllOrders, getInfoProducts, getBaskets, getAllProducts } = useOrderService();
 
+   
+
+   
   useEffect(() => {
     onLoadingProducts();
     getBaskets().then((data) => {
@@ -26,9 +26,13 @@ function App() {
     });
 
     getAllProducts().then(setAllProducts);
-    getBasketsProduct().then(setBasketsProduct);
+
   }, [localStorage.data]);
  
+   const headersOzon = {  
+        'Client-Id': `${localStorage.clientId}` ,
+        'Api-Key': `${localStorage.apiKey}`
+     }
 
   const onLoadingProducts = (data = localStorage.data) => {
     const formData = JSON.stringify({
@@ -52,7 +56,7 @@ function App() {
     });
 
     const arr = [];
-    getAllOrders(formData).then((data) => {
+    getAllOrders(formData, headersOzon).then((data) => {
       setOrders(data);
       getInfoProducts(data).then((data) => {
         data.forEach((item, i) =>
@@ -75,7 +79,7 @@ function App() {
       <Routes>
         <Route path="/" element={<ListOrder props={orders} date={date} setDate={setDate} onLoadingProducts={onLoadingProducts} />} />
         <Route path="/table" element={<Table props={product} date={date} setDate={setDate} onLoadingProducts={onLoadingProducts} />} />
-        <Route path="/test" element={<TestPage props={baskets} allProducts={allProducts} basketsProduct={basketsProduct} />} />
+        {/* <Route path="/test" element={<TestPage props={baskets} allProducts={allProducts} basketsProduct={basketsProduct} />} /> */}
       </Routes>
     </BrowserRouter>
   );

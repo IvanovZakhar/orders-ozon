@@ -40,25 +40,49 @@ const NavLink = ( {onLoadingProducts, date, setDate} ) => {
              
               
             </Navbar>
-              <Form>
-                <Form.Group className="mb-3" controlId="formBasicEmail">
-                    <Form.Label>Введите дату</Form.Label>
-                    <Form.Control  type="date" defaultValue={localStorage.data} onInput={(e) => {localStorage.setItem('data', e.target.value)}}/>
-                </Form.Group>
-                 
-                  <Button variant="primary"  
-                    onClick={() => onLoadingProducts()}
-                    type="submit"
-                  >
-                   Ок
+
+                
+              <div className='forms'>
+                <Form>
+                  <Form.Group className="mb-3" controlId="formBasicEmail">
+                      <Form.Label>Введите дату</Form.Label>
+                      <Form.Control  type="date" defaultValue={localStorage.data} onInput={(e) => {localStorage.setItem('data', e.target.value)}}/>
+                  </Form.Group>
+                  
+                    <Button variant="primary"  
+                      onClick={() => onLoadingProducts()}
+                      type="submit"
+                    >
+                    Ок
+                    </Button>
+                </Form>
+                <Form>
+                  <Form.Group className="mb-3" controlId="formBasicEmail">
+                    <Form.Label>Введите данные</Form.Label>
+                    <Form.Control type="number" placeholder="Client-Id" defaultValue={localStorage.clientId} onInput={(e) => {localStorage.setItem('clientId', e.target.value)}}/>
+
+                  </Form.Group>
+
+                  <Form.Group className="mb-3" controlId="formBasicPassword">
+
+                    <Form.Control type="text" placeholder="Api-key"  defaultValue={localStorage.apiKey} onInput={(e) => {localStorage.setItem('apiKey', e.target.value)}}/>
+                  </Form.Group>
+
+                  <Button variant="primary"  onClick={() => {onLoadingProducts()}} type="submit">
+                    Submit
                   </Button>
               </Form>
+              </div>
+ 
             </Offcanvas.Body>
+
+
          </Offcanvas>
         
       </>
     )
 }
+ 
 
 export default NavLink;
 

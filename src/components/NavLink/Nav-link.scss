@@ -23,3 +23,21 @@ form{
     display: flex;
     justify-content: space-around;
 }
+
+.labels{
+    display: flex;
+    flex-direction: column;
+    .labels-btn{
+        margin-top: 70px;
+        height: 50px;
+    }
+    
+    span{
+        cursor: pointer;
+        margin: 0 auto;
+        margin-top: 10px;
+        color: rgb(150, 51, 189);
+        
+        
+    }
+}

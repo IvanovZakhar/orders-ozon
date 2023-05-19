@@ -1,9 +1,24 @@
 import NavLink from '../NavLink/Nav-link';
+import useOrderService from '../../services/OrderService';
+import { useState, useEffect } from 'react';
 import './ListOrder.scss'
 
-const ListOrder = ({props, onLoadingProducts, date, setDate}) => {
- 
-    const elem = props ? props.map((item, i) => {
+const ListOrder = ({props, onLoadingProducts, date, setDate, headersOzon}) => {
+    const {getLabelOzon} = useOrderService()
+    const [labels, setLabels] = useState();
+    const compare = (a, b) => {
+        if (a.productArt < b.productArt) {
+          return -1;
+        }
+        if (a.productArt > b.productArt) {
+          return 1;
+        }
+        return 0;
+      };
+
+    const readySort = props ? props.sort(compare) : null
+    
+    const elem = readySort ? readySort.map((item, i) => {
         const {date,
             postingNumber,
             productArt,productName,
@@ -28,93 +43,75 @@ const ListOrder = ({props, onLoadingProducts, date, setDate}) => {
     }) : null;
  
 
-
-   function colculateTotalProducts (product) {
- 
-        // const compl = product ? 
-        // product.filter(item => item.productArt === 'AR752031957-06' )
-        // .map(item => {
-        //    const elem = [
-        //             {productName: "Крепежный кронштейн ( коннектор) 1 шт. для беседок и пергол ARSENAL PERGOLA модель AR75112Ц957-06", quantity: 6},
-        //             {productName: "Крепежный кронштейн ( коннектор) 2 шт.  для беседок и пергол ARSENAL PERGOLA модель AR75312У957-06", quantity: 2},
-        //             {productName: "Крепежный кронштейн ( коннектор) 1 шт.  для беседок и пергол ARSENAL PERGOLA модель AR75312T957-06", quantity: 2}]
-        //     return elem
-                    
-        // })  
-        // .reduce((accumulator, item) => {
-        //    return item.concat(accumulator)
-        // }) : [{}];
-
-
-    //    const newElem = product ? product.concat(compl) : null;
-
-        // const compl = product.filter(item => {
-        //     if(item.productArt === 'AR752031957-06'){
-        //         return
-        //     } 
-        // })
-        // console.log(compl) 
-        // const newElem = product.concat(compl);
-        // console.log(newElem) 
-
-        
-
-        // function colculateComplProduct (items, elem) {
-
-        //     const resFilter = items.filter(item => {
-              
-        //         if(item.productArt === elem){
-        //             return item
-        //         } 
-
-        //     })
-        //     console.log(resFilter)
-
-        //     const resCompl = resFilter ? resFilter.map(item => {
-        //    const elem = [
-        //             {productName: "Крепежный кронштейн ( коннектор) 1 шт. для беседок и пергол ARSENAL PERGOLA модель AR75112Ц957-06", quantity: 6},
-        //             {productName: "Крепежный кронштейн ( коннектор) 2 шт.  для беседок и пергол ARSENAL PERGOLA модель AR75312У957-06", quantity: 2},
-        //             {productName: "Крепежный кронштейн ( коннектор) 1 шт.  для беседок и пергол ARSENAL PERGOLA модель AR75312T957-06", quantity: 2}]
-        //     return elem
-                    
-        // })
-        // .reduce((accumulator, item) => {
-        //    return item.concat(accumulator)
-        // }) 
-        // : [];
-
-        //  return resCompl;
-            
-        // }
-
-        // const compl = colculateComplProduct(product, 'AR74KE23957-0')
-
-        
-        // console.log(compl)
-         
-
-        const summary = product.reduce((accumulator, item) => Object.assign(accumulator, {
-            
-            [item.productArt]: (accumulator[item.productArt] || 0) + item.quantity
-        }), {})
-
-       
+   
     
-     return Object.entries(summary).map(([key, value]) => (
-            <tr className='list-order__item' key={key}>
-              <td className='list-order__item'>{key}</td>
-              <td className='list-order__item'>{value}</td>
-            </tr>
-          ))
-             
-   }
+   
+
+    function getLabels () {
+        const postingNumbers = readySort ? readySort.map(obj => obj.postingNumber): null
+    
+        const body = {
+            "posting_number": postingNumbers
+        };
+    
+            
+        getLabelOzon('https://api-seller.ozon.ru/v1/posting/fbs/package-label/create', 'POST', JSON.stringify(body), headersOzon)
+        .then(data => {
+            console.log(data);
+            const taskId = {
+                "task_id": data.result.task_id
+            };
+            console.log(taskId);
+    
+            const interval = setInterval(() => {
+                getLabelOzon('https://api-seller.ozon.ru/v1/posting/fbs/package-label/get', 'POST', JSON.stringify(taskId), headersOzon)
+                    .then(res => {
+                        console.log(res);
+                        if (res.result.status === 'completed') {
+                            clearInterval(interval);
+                            setLabels(res.result.file_url);
+                        } else if (res.result.status === 'error') {
+                            clearInterval(interval);
+                            console.log('Ошибка при формировании файла с этикетками:', res.result.error);
+                        }
+                    })
+                    .catch(error => {
+                        clearInterval(interval);
+                        console.log('Ошибка при проверке статуса задания:', error);
+                    });
+            }, 3000);
+        })
+        .catch(error => console.log('Ошибка при создании задания:', error));
+    
+    }
+
+    function colculateTotalProducts(product) {
+        const summary = product.reduce((accumulator, item) =>
+          Object.assign(accumulator, {
+            [item.productArt]: {
+              name: item.productName,
+              quantity: (accumulator[item.productArt]?.quantity || 0) + item.quantity,
+            },
+          }), {});
+      
+        return Object.entries(summary).map(([key, value]) => (
+          <tr className='list-order__item' key={key}>
+            <td className='list-order__item'>{key}</td>
+            <td className='list-order__item-name'>{value.name}</td>
+            <td className='list-order__item'>{value.quantity}</td>
+          </tr>
+        ));
+      }
+      
 const productTotal = props ? colculateTotalProducts(props) : null;
    const dateOrders = props[0] ? `${props[0].date.slice(8, 10)}.${props[0].date.slice(5, 7)}.${props[0].date.slice(0, 4)}` : 'Нет отправлений';
   
     return(
         <>
-             <NavLink onLoadingProducts={onLoadingProducts} date={date} setDate={setDate}/>
-            {elem ? <Page elem={elem} productTotal={productTotal} dateOrders={dateOrders}/> : <h2>Введите дату</h2>}</>
+             <NavLink onLoadingProducts={onLoadingProducts} date={date} setDate={setDate} getLabels={getLabels} labels={labels}/>
+             
+            {elem ? <Page elem={elem} productTotal={productTotal} dateOrders={dateOrders}/> : <h2>Введите дату</h2>}
+            </>
     )
 }
 
@@ -147,13 +144,14 @@ const Page = ({elem, productTotal, dateOrders}) => {
                     <thead>
                         <tr className='list-order__item'>
                             <th className='list-order__item'>Артикул</th> 
+                            <th className='list-order__item'>Название</th>
                             <th className='list-order__item'>Кол-во</th>
                         </tr>
                     </thead>
                     <tbody>
                         {productTotal}
                     </tbody>
-                
+
                 </table>
 
         </>

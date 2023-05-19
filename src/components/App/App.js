@@ -14,8 +14,9 @@ function App() {
   const [date, setDate] = useState('');
   const [baskets, setBaskets] = useState();
   const [basketsProduct, setBasketsProduct] = useState();
+ 
   const { getAllOrders, getInfoProducts, getBaskets, getAllProducts } = useOrderService();
-
+  
    
 
    
@@ -74,11 +75,14 @@ function App() {
     });
   };
 
+
+ 
+
   return (
     <BrowserRouter>
       <Routes>
-        <Route path="/" element={<ListOrder props={orders} date={date} setDate={setDate} onLoadingProducts={onLoadingProducts} />} />
-        <Route path="/table" element={<Table props={product} date={date} setDate={setDate} onLoadingProducts={onLoadingProducts} />} />
+        <Route path="/" element={<ListOrder props={orders} date={date} setDate={setDate} onLoadingProducts={onLoadingProducts} headersOzon={headersOzon}/>} />
+        <Route path="/table" element={<Table props={product} date={date} setDate={setDate} onLoadingProducts={onLoadingProducts}  />} />
         {/* <Route path="/test" element={<TestPage props={baskets} allProducts={allProducts} basketsProduct={basketsProduct} />} /> */}
       </Routes>
     </BrowserRouter>

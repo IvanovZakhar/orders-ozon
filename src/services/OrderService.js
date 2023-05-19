@@ -17,6 +17,11 @@ const useOrderService = () => {
         return res;
     }
 
+    const getLabelOzon = async (url, method, body, headersOzon) => {
+        const res = await request(url, method, body, headersOzon);
+        return res
+    }
+
  
 
     const getInfoProducts = async (article) => {
@@ -36,8 +41,8 @@ const useOrderService = () => {
 
     }
 
-    const updateData = async (url,method, body) => {
-        const res = await request(url, method, body);
+    const updateData = async (url,method, headersOzon, body) => {
+        const res = await request(url, method,  body, headersOzon,);
     }
 
     const getBaskets = async () => {
@@ -71,7 +76,7 @@ const useOrderService = () => {
 
 
 
-    return {loading, error, clearError, getAllOrders, getInfoProducts, getBaskets , getAllProducts, updateData}
+    return {loading, error, clearError, getAllOrders, getInfoProducts, getBaskets , getAllProducts, updateData, getLabelOzon}
 }
 
 export default useOrderService;

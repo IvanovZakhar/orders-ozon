@@ -9,7 +9,7 @@ import Button from 'react-bootstrap/Button';
 import Offcanvas from 'react-bootstrap/Offcanvas';
 import './Nav-link.scss';
 
-const NavLink = ( {onLoadingProducts, date, setDate} ) => {
+const NavLink = ( {onLoadingProducts, getLabels, labels} ) => {
  
   const [show, setShow] = useState(false);
   // const [dateNav, setNavDate] = useState()
@@ -56,6 +56,10 @@ const NavLink = ( {onLoadingProducts, date, setDate} ) => {
                     Ок
                     </Button>
                 </Form>
+                  <div className='labels'>
+                      <Button className='labels-btn' onClick={() => getLabels()}> Получить наклейки</Button>
+                      {labels ? <span onClick={() => window.open(labels)}>Скачать</span> : null}
+                  </div>
                 <Form>
                   <Form.Group className="mb-3" controlId="formBasicEmail">
                     <Form.Label>Введите данные</Form.Label>
@@ -72,6 +76,8 @@ const NavLink = ( {onLoadingProducts, date, setDate} ) => {
                     Submit
                   </Button>
               </Form>
+              
+
               </div>
  
             </Offcanvas.Body>

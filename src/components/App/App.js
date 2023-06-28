@@ -14,7 +14,7 @@ function App() {
   const [date, setDate] = useState('');
   const [baskets, setBaskets] = useState();
   const [basketsProduct, setBasketsProduct] = useState();
- 
+  const [basketsCompl, setBasketsCompl] = useState();
   const { getAllOrders, getInfoProducts, getBaskets, getAllProducts } = useOrderService();
   
    
@@ -25,11 +25,16 @@ function App() {
     getBaskets().then((data) => {
       setBaskets(data);
     });
+    getBaskets('productBaskets').then((data) => {
+      setBasketsProduct(data);
+    });
+    getBaskets('basketsCompl').then((data) => {
+      setBasketsCompl(data);
+    });
 
     getAllProducts().then(setAllProducts);
-
-  }, [localStorage.data]);
- 
+    
+  }, [localStorage.data]); 
    const headersOzon = {  
         'Client-Id': `${localStorage.clientId}` ,
         'Api-Key': `${localStorage.apiKey}`
@@ -58,6 +63,7 @@ function App() {
 
     const arr = [];
     getAllOrders(formData, headersOzon).then((data) => {
+    
       setOrders(data);
       getInfoProducts(data).then((data) => {
         data.forEach((item, i) =>
@@ -82,8 +88,8 @@ function App() {
     <BrowserRouter>
       <Routes>
         <Route path="/" element={<ListOrder props={orders} date={date} setDate={setDate} onLoadingProducts={onLoadingProducts} headersOzon={headersOzon}/>} />
-        <Route path="/table" element={<Table props={product} date={date} setDate={setDate} onLoadingProducts={onLoadingProducts}  />} />
-        {/* <Route path="/test" element={<TestPage props={baskets} allProducts={allProducts} basketsProduct={basketsProduct} />} /> */}
+        <Route path="/table" element={<Table basketsCompl={basketsCompl} props={product} date={date} setDate={setDate} onLoadingProducts={onLoadingProducts}  />} />
+        <Route path="/test" element={<TestPage props={baskets} basketsProduct={basketsProduct} />} />
       </Routes>
     </BrowserRouter>
   );

@@ -7,7 +7,7 @@ const useOrderService = () => {
     const getAllOrders = async (formData, headersOzon) => {
   
         const res = await request(`https://api-seller.ozon.ru/v3/posting/fbs/unfulfilled/list`, 'POST', formData, headersOzon);
-        
+            console.log(res)
         return res.result.postings.map(transformProduct)
     }
 
@@ -45,8 +45,8 @@ const useOrderService = () => {
         const res = await request(url, method,  body, headersOzon,);
     }
 
-    const getBaskets = async () => {
-        const res = await request(`http://localhost:3001/baskets`, 'GET');
+    const getBaskets = async (product = 'baskets') => {
+        const res = await request(`http://localhost:3002/${product}`, 'GET');
         return res 
        
     }

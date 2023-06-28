@@ -2,7 +2,7 @@ import NavLink from '../NavLink/Nav-link';
 import { useState } from 'react';
 import './Table.scss'
 
-function Table({props, date, setDate, onLoadingProducts}) {
+function Table({props, date, setDate, onLoadingProducts, basketsCompl}) {
  
 
     const elem = props[0] ? props[0].map((item, i) => {
@@ -12,7 +12,11 @@ function Table({props, date, setDate, onLoadingProducts}) {
              date, eyelet, height, loops, name, number_of_roll,
              postingNumber, price, roll, screws, weight, width, Column21, warehouse, quantity} = item;
 
-         
+         const res = basketsCompl.filter(item => {
+            if(item.article === article){
+                return item.package_contents
+            }
+        }) 
      
         return (
             <table className='order' key={i}>
@@ -141,7 +145,7 @@ function Table({props, date, setDate, onLoadingProducts}) {
                             <th>{Column19}</th>
                         </tr>
                         <tr>
-                            <th>{Column20}</th>
+                            <th>{res[0] ? res[0].package_contents  : null}</th>
                         </tr>
                         <tr>
                             <th>-</th>

@@ -36,7 +36,7 @@ const ListOrder = ({props, onLoadingProducts, date, setDate, headersOzon}) => {
                     <td className='list-order__item'>{productArt}</td>
                     <td className='list-order__item'>{productPrice.slice(0, -7)}</td>
                     <td className='list-order__item'>{quantity}</td>
-                    <td className='warehouse list-order__item'>{warehouse === "Крупногабарит" ? "П" : null}</td>
+                    <td className='warehouse list-order__item'>{warehouse.slice(0, 3)}</td>
                 </tr>
                
             )

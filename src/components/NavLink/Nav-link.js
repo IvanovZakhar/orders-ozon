@@ -17,7 +17,7 @@ const NavLink = ( {onLoadingProducts, getLabels, labels, setName} ) => {
   const handleClose = () => setShow(false);
   const handleShow = () => setShow(true);
     
-  const apiData = JSON.parse(localStorage.apiData)
+  const apiData = localStorage.apiData ? JSON.parse(localStorage.apiData) : []
   const deletItem = (i) => { 
       const newData = apiData.filter(item => item.id !== i)
       console.log(newData)

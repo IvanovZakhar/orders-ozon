@@ -17,9 +17,6 @@ function App() {
   const [basketsCompl, setBasketsCompl] = useState();
   const { getAllOrders, getInfoProducts, getBaskets, getAllProducts } = useOrderService();
   
-   
-
-   
   useEffect(() => {
     onLoadingProducts();
     getBaskets().then((data) => {
@@ -38,8 +35,7 @@ function App() {
    const headersOzon = {  
         'Client-Id': `${localStorage.clientId}` ,
         'Api-Key': `${localStorage.apiKey}`
-     }
-
+     } 
   const onLoadingProducts = (data = localStorage.data) => {
     const formData = JSON.stringify({
       dir: 'ASC',
@@ -87,7 +83,7 @@ function App() {
   return (
     <BrowserRouter>
       <Routes>
-        <Route path="/" element={<ListOrder props={orders} date={date} setDate={setDate} onLoadingProducts={onLoadingProducts} headersOzon={headersOzon}/>} />
+        <Route path="/" element={<ListOrder props={orders} date={date} setDate={setDate} onLoadingProducts={onLoadingProducts} headersOzon={headersOzon} />} />
         <Route path="/table" element={<Table basketsCompl={basketsCompl} props={product} date={date} setDate={setDate} onLoadingProducts={onLoadingProducts}  />} />
         <Route path="/test" element={<TestPage props={baskets} basketsProduct={basketsProduct} />} />
       </Routes>

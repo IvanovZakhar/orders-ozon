@@ -6,6 +6,7 @@ import './ListOrder.scss'
 const ListOrder = ({props, onLoadingProducts, date, setDate, headersOzon}) => {
     const {getLabelOzon} = useOrderService()
     const [labels, setLabels] = useState();
+    const [name, setName] = useState('')
     const compare = (a, b) => {
         if (a.productArt < b.productArt) {
           return -1;
@@ -108,8 +109,8 @@ const productTotal = props ? colculateTotalProducts(props) : null;
   
     return(
         <>
-             <NavLink onLoadingProducts={onLoadingProducts} date={date} setDate={setDate} getLabels={getLabels} labels={labels}/>
-             
+             <NavLink onLoadingProducts={onLoadingProducts} date={date} setDate={setDate} getLabels={getLabels} labels={labels} setName={setName}/>
+             <h1>{localStorage.nameCompany}</h1>
             {elem ? <Page elem={elem} productTotal={productTotal} dateOrders={dateOrders}/> : <h2>Введите дату</h2>}
             </>
     )

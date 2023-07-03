@@ -41,3 +41,27 @@ form{
         
     }
 }
+
+.offcanvas-body{
+    flex-grow: 1;
+    padding: var(--bs-offcanvas-padding-y) var(--bs-offcanvas-padding-x); 
+    min-height: 400px;
+    background-color: white;
+}
+
+.toast{
+    margin-top: 20px;
+}
+
+.me-auto{
+    cursor: pointer;
+}
+
+.active{
+    box-shadow: 0 0.5rem 1rem rgba(47, 0, 255, 0.45);
+    color:rgba(47, 0, 255);
+}
+
+.active-text{
+    color:rgba(47, 0, 255);
+}

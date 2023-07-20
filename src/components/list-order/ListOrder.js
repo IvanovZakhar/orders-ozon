@@ -2,6 +2,9 @@ import NavLink from '../NavLink/Nav-link';
 import useOrderService from '../../services/OrderService';
 import { useState, useEffect } from 'react';
 import './ListOrder.scss'
+import React from 'react';
+import jsPDF from 'jspdf';
+import html2canvas from 'html2canvas';
 
 const ListOrder = ({props, onLoadingProducts, date, setDate, headersOzon}) => {
     const {getLabelOzon} = useOrderService()
@@ -44,8 +47,36 @@ const ListOrder = ({props, onLoadingProducts, date, setDate, headersOzon}) => {
     }) : null;
  
 
-   
+    function getEuropeanFormattedDate() {
+        const today = new Date();
+      
+        // Получаем день, месяц и год
+        const day = String(today.getDate()).padStart(2, '0');
+        const month = String(today.getMonth() + 1).padStart(2, '0'); // Месяцы в JS начинаются с 0, поэтому добавляем 1
+        const year = today.getFullYear();
+      
+        // Собираем дату в европейском формате
+        const europeanFormattedDate = `${day}/${month}/${year}`;
+      
+        return europeanFormattedDate;
+      }
+      
+      // Пример использования
+      const todayEuropeanDate = getEuropeanFormattedDate();
+    const saveAsPDF = () => {
+        const input = document.getElementById('canvas');
     
+        html2canvas(input).then((canvas) => {
+            const imgData = canvas.toDataURL('image/png');
+            const pdf = new jsPDF('landscape'); // Задаем альбомный формат
+            const imgProps = pdf.getImageProperties(imgData);
+            const pdfWidth = pdf.internal.pageSize.getWidth();
+            const pdfHeight = (imgProps.height * pdfWidth) / imgProps.width;
+      
+            pdf.addImage(imgData, 'PNG', 0, 0, pdfWidth, pdfHeight);
+          pdf.save(`${localStorage.nameCompany}__${todayEuropeanDate}.pdf`);
+        });
+      };
    
 
     function getLabels () {
@@ -110,17 +141,21 @@ const productTotal = props ? colculateTotalProducts(props) : null;
     return(
         <>
              <NavLink onLoadingProducts={onLoadingProducts} date={date} setDate={setDate} getLabels={getLabels} labels={labels} setName={setName}/>
-             <h1>{localStorage.nameCompany}</h1>
-            {elem ? <Page elem={elem} productTotal={productTotal} dateOrders={dateOrders}/> : <h2>Введите дату</h2>}
+            <div id='canvas'>
+                <h1>{localStorage.nameCompany}</h1>
+                {elem ? <Page elem={elem} productTotal={productTotal} dateOrders={dateOrders}/> : <h2>Введите дату</h2>}
+            </div>
+            <button onClick={saveAsPDF}>Сохранить как PDF</button>
             </>
     )
 }
 
 const Page = ({elem, productTotal, dateOrders}) => {
+    
     return(
         <>
                
-                <table className="list-order">
+                <table className="list-order" id='list-order'>
                     <thead>
                         <tr className='list-order__item'>
                             <th className='list-order__item'>№</th>
@@ -140,7 +175,7 @@ const Page = ({elem, productTotal, dateOrders}) => {
                 
                 </table>
             
-                <table className="list-order">
+                <table className="list-order" id='list-order'>
                     <h2>Итого</h2>
                     <thead>
                         <tr className='list-order__item'>

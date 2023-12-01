@@ -5,8 +5,10 @@ import './ListOrder.scss'
 import React from 'react';
 import jsPDF from 'jspdf';
 import html2canvas from 'html2canvas';
+import { useBarcode } from 'next-barcode';
 
-const ListOrder = ({props, onLoadingProducts, date, setDate, headersOzon}) => {
+const ListOrder = ({props, onLoadingProducts, date, setDate, headersOzon, ordersWB}) => {
+
     const {getLabelOzon} = useOrderService()
     const [labels, setLabels] = useState();
     const [name, setName] = useState('')
@@ -38,7 +40,7 @@ const ListOrder = ({props, onLoadingProducts, date, setDate, headersOzon}) => {
                     <td className='list-order__item'>{`${date.slice(8, 10)}.${date.slice(5, 7)}.${date.slice(0, 4)}`}</td>
                     <td className='productName list-order__item'>{productName}</td>
                     <td className='list-order__item'>{productArt}</td>
-                    <td className='list-order__item'>{productPrice.slice(0, -7)}</td>
+                    <td className='list-order__item'>{productPrice.slice(0, -5)}</td>
                     <td className='list-order__item'>{quantity}</td>
                     <td className='warehouse list-order__item'>{warehouse.slice(0, 8)}</td>
                 </tr>
@@ -143,7 +145,7 @@ const productTotal = props ? colculateTotalProducts(props) : null;
              <NavLink onLoadingProducts={onLoadingProducts} date={date} setDate={setDate} getLabels={getLabels} labels={labels} setName={setName}/>
             <div id='canvas'>
                 <h1>{localStorage.nameCompany}</h1>
-                {elem ? <Page elem={elem} productTotal={productTotal} dateOrders={dateOrders}/> : <h2>Введите дату</h2>}
+                {localStorage.nameCompany === "WB" ? <PageWB ordersWB={ordersWB}/> : <Page elem={elem} productTotal={productTotal} dateOrders={dateOrders}/> }
             </div>
             <button onClick={saveAsPDF}>Сохранить как PDF</button>
             </>
@@ -189,6 +191,67 @@ const Page = ({elem, productTotal, dateOrders}) => {
                     </tbody>
 
                 </table>
+
+        </>
+    )
+}
+
+const PageWB = ({ordersWB}) => {
+    const Barcode = ({barcodeOrders}) => {
+        const options = {
+            value: `${barcodeOrders}`,
+            options: {
+              background: '#ffffff',
+              height: '50',
+              width: '2', 
+              display: 'flex',
+              justifyContent: 'center',
+              fontSize: '0'
+            }
+          };
+        const { inputRef } = useBarcode(options);
+      
+        return <svg className='barcode' ref={inputRef} style={  {
+            display: 'block',
+            margin: '0 auto',
+            textAlign: 'center'
+          }}/>;
+      };
+    return(
+        <>
+               
+                <table className="list-order" id='list-order'>
+                    <thead>
+                        <tr className='list-order__item'>
+                            <th className='list-order__item'>№</th>
+                            <th className='list-order__item'>Номер отправления</th>
+                            <th className='list-order__item'>Наклейка</th>
+                            <th className='list-order__item date'><input type='date'/></th>
+                            <th className='art list-order__item'>Артикул</th> 
+                            <th className='list-order__item'>Кол-во шт.</th>
+                            <th className='list-order__item'>Склад</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {ordersWB.map((order, i) => {
+                            return(
+                            <tr className='list-order__item' key={i}>
+                                <td className='list-order__item'>{i+=1}</td>
+                                <td className='list-order__item posting-number'>{<Barcode barcodeOrders={`WB${order.id}`}/>}</td>
+                                <td className='list-order__item'> {order.stickerId}</td>
+                                <td className='productName list-order__item'>{order.name}</td>
+                                <td className='list-order__item'>{order.article}</td> 
+                                <td className='list-order__item'>1</td>
+                                <td className='warehouse list-order__item'>{order.warehouseId === 837292 ? "Уткина заводь" : "Шушары"}</td>
+                            </tr>
+                            )
+                        })}
+                        
+                    </tbody>
+                
+                </table>
+            
+  
 
         </>
     )

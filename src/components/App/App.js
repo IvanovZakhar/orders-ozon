@@ -15,22 +15,15 @@ function App() {
   const [baskets, setBaskets] = useState();
   const [basketsProduct, setBasketsProduct] = useState();
   const [basketsCompl, setBasketsCompl] = useState();
-  const { getAllOrders, getInfoProducts, getBaskets, getAllProducts } = useOrderService();
-  
-  useEffect(() => {
-    onLoadingProducts();
-    getBaskets().then((data) => {
-      setBaskets(data);
-    });
-    getBaskets('productBaskets').then((data) => {
-      setBasketsProduct(data);
-    });
-    getBaskets('basketsCompl').then((data) => {
-      setBasketsCompl(data);
-    });
+  const [ordersWB, setOrdersWB] = useState([])
+  const { getAllOrders, getInfoProducts, getBaskets, getAllProducts, getAllOrdersWB, getStickersWB } = useOrderService();
 
-    getAllProducts().then(setAllProducts);
-    
+  useEffect(() => { 
+   
+  }, [])
+ 
+  useEffect(() => {
+    onLoadingProducts(); 
   }, [localStorage.data]); 
    const headersOzon = {  
         'Client-Id': `${localStorage.clientId}` ,
@@ -55,36 +48,63 @@ function App() {
         financial_data: true,
         translit: true,
       },
-    });
-
+    }); 
     const arr = [];
-    getAllOrders(formData, headersOzon).then((data) => {
-    
-      setOrders(data);
-      getInfoProducts(data).then((data) => {
-        data.forEach((item, i) =>
-          item.then((data) => {
-            arr[i] = data[0];
-            arr[i].postingNumber = data.postingNumber;
-            arr[i].date = data.date;
-            arr[i].price = data.price;
-            arr[i].warehouse = data.warehouse;
-            arr[i].quantity = data.quantity;
-            setProduct([arr]);
+    if(localStorage.nameCompany === "WB"){
+      const data = localStorage.data
+      const dateFrom = `${data}T00:00:00.000Z`
+      const dateTo = `${data}T17:00:00Z`
+      getAllOrdersWB(dateFrom, dateTo, localStorage.apiKey).then(data => {
+ 
+        getInfoProducts().then(allProducts => {
+          // Перебираем заказы и сравниваем и фильтруя их по артикулам выводим их названия
+          const resOrders = data.map(order => {
+            const resProd = allProducts.filter(product => product.article === order.article ) 
+            if(resProd.length){  
+              resProd[0].id = order.id
+              resProd[0].warehouseId = order.warehouseId
+              return resProd[0]
+            }
           })
-        );
-      });
-    });
+          // Получаем id каждого заказа
+          const arrId = resOrders.map(item => item.id)
+          // Получаем стикеры каждого заказа
+          getStickersWB(localStorage.apiKey, JSON.stringify({'orders':arrId})).then(stickers => {
+
+              // Номер стикера теперь прикрепляем к каждому заказу формируя массив закозов со всеми данными
+              const readyOrders = resOrders.map(order =>{
+                const result = stickers.filter(sticker => sticker.orderId === order.id) 
+                const obj = {
+                  'id': result[0].orderId,
+                  'name': order.name,
+                  'article': order.article,
+                  'stickerId': result[0].partB ,
+                  'warehouseId': order.warehouseId
+                }
+                return obj
+              })
+              setOrdersWB(readyOrders)
+          })
+    
+        }) 
+      })
+    }else{
+      getAllOrders(formData, headersOzon).then(setOrders);
+    }
   };
 
 
  
 
   return (
+ 
     <BrowserRouter>
       <Routes>
-        <Route path="/" element={<ListOrder props={orders} date={date} setDate={setDate} onLoadingProducts={onLoadingProducts} headersOzon={headersOzon} />} />
+        
+        <Route path="/" element={<ListOrder props={orders} ordersWB={ordersWB} date={date} setDate={setDate} onLoadingProducts={onLoadingProducts} headersOzon={headersOzon} />} />
+        
         <Route path="/table" element={<Table basketsCompl={basketsCompl} props={product} date={date} setDate={setDate} onLoadingProducts={onLoadingProducts}  />} />
+        
         <Route path="/test" element={<TestPage props={baskets} basketsProduct={basketsProduct} />} />
       </Routes>
     </BrowserRouter>

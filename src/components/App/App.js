@@ -53,7 +53,7 @@ function App() {
     if(localStorage.nameCompany === "WB"){
       const data = localStorage.data
       const dateFrom = `${data}T00:00:00.000Z`
-      const dateTo = `${data}T17:00:00Z`
+      const dateTo = `${data}T23:59:59Z`
       getAllOrdersWB(dateFrom, dateTo, localStorage.apiKey).then(data => {
  
         getInfoProducts().then(allProducts => {

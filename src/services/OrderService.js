@@ -29,6 +29,8 @@ const useOrderService = () => {
             "Authorization": `${apiKey}`,
             "Content-Type": "application/json"
          } 
+         console.log(dateFrom)
+         console.log(dateTo)
         const unixDateFrom = getNewDate(dateFrom)
         const unixDateTo = getNewDate(dateTo)
         const res = await request(`https://suppliers-api.wildberries.ru/api/v3/orders?limit=50&next=0&dateFrom=${unixDateFrom}&dateTo=${unixDateTo}`, 'GET', null, headersWB);
@@ -50,11 +52,11 @@ const useOrderService = () => {
 
     function getNewDate (date) {
             // Создаем объект Date из строки
-    const dateObject = new Date(date);
+            const dateObject = new Date(date);
 
-    // Получаем Unix timestamp (количество миллисекунд с 1 января 1970 года)
-    const unixTimestamp = dateObject.getTime();
-    return  Math.floor(unixTimestamp / 1000);
+            // Получаем Unix timestamp (количество миллисекунд с 1 января 1970 года)
+            const unixTimestamp = dateObject.getTime();
+            return  Math.floor(unixTimestamp / 1000);
     
     }
 

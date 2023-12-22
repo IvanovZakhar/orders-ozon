@@ -85,7 +85,13 @@ const useOrderService = () => {
             sku: baskets.sku_id
         } 
      } 
+     const getAllLogs = async () => {
+        
+        const res = await request(`${_url}/logs/products-for-warehouse`, 
+                                    'GET')
     
+        return res
+    }
  
     const transformProduct = (product) => {
         
@@ -103,7 +109,7 @@ const useOrderService = () => {
 
 
 
-    return {loading, error, clearError, getAllOrders, getInfoProducts, getBaskets , getAllProducts, updateData, getLabelOzon, getAllOrdersWB, getStickersWB}
+    return {loading, error, clearError, getAllOrders, getInfoProducts, getBaskets , getAllProducts, updateData, getLabelOzon, getAllOrdersWB, getStickersWB, getAllLogs}
 }
 
 export default useOrderService;

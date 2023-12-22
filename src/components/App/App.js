@@ -16,12 +16,31 @@ function App() {
   const [basketsProduct, setBasketsProduct] = useState();
   const [basketsCompl, setBasketsCompl] = useState();
   const [ordersWB, setOrdersWB] = useState([])
-  const { getAllOrders, getInfoProducts, getBaskets, getAllProducts, getAllOrdersWB, getStickersWB } = useOrderService();
+  const [logs, setLogs] = useState([])
+  const [allOrders, setAllOrders] = useState([])
+  const { getAllOrders, getInfoProducts, getBaskets, getAllProducts, getAllOrdersWB, getStickersWB, getAllLogs } = useOrderService();
 
-  useEffect(() => { 
-   
-  }, [])
  
+
+  const formData = JSON.stringify({
+    dir: 'ASC',
+    filter: {
+      cutoff_from: `${localStorage.data}T00:00:00.000Z`,
+      cutoff_to: `${localStorage.data}T17:00:00Z`,
+      delivery_method_id: [],
+      provider_id: [],
+      status: 'awaiting_deliver',
+      warehouse_id: [],
+    },
+    limit: 100,
+    offset: 0,
+    with: {
+      analytics_data: true,
+      barcodes: true,
+      financial_data: true,
+      translit: true,
+    }
+}) 
   useEffect(() => {
     onLoadingProducts(); 
   }, [localStorage.data]); 
@@ -29,68 +48,103 @@ function App() {
         'Client-Id': `${localStorage.clientId}` ,
         'Api-Key': `${localStorage.apiKey}`
      } 
-  const onLoadingProducts = (data = localStorage.data) => {
-    const formData = JSON.stringify({
-      dir: 'ASC',
-      filter: {
-        cutoff_from: `${data}T00:00:00.000Z`,
-        cutoff_to: `${data}T17:00:00Z`,
-        delivery_method_id: [],
-        provider_id: [],
-        status: 'awaiting_deliver',
-        warehouse_id: [],
-      },
-      limit: 100,
-      offset: 0,
-      with: {
-        analytics_data: true,
-        barcodes: true,
-        financial_data: true,
-        translit: true,
-      },
-    }); 
-    const arr = [];
-    if(localStorage.nameCompany === "WB"){
-      const data = localStorage.data
-      const dateFrom = `${data}T00:00:00.000Z`
-      const dateTo = `${data}T23:59:59Z`
-      getAllOrdersWB(dateFrom, dateTo, localStorage.apiKey).then(data => {
- 
-        getInfoProducts().then(allProducts => {
-          // Перебираем заказы и сравниваем и фильтруя их по артикулам выводим их названия
-          const resOrders = data.map(order => {
-            const resProd = allProducts.filter(product => product.article === order.article ) 
-            if(resProd.length){  
-              resProd[0].id = order.id
-              resProd[0].warehouseId = order.warehouseId
-              return resProd[0]
-            }
-          })
-          // Получаем id каждого заказа
-          const arrId = resOrders.map(item => item.id)
-          // Получаем стикеры каждого заказа
-          getStickersWB(localStorage.apiKey, JSON.stringify({'orders':arrId})).then(stickers => {
 
-              // Номер стикера теперь прикрепляем к каждому заказу формируя массив закозов со всеми данными
-              const readyOrders = resOrders.map(order =>{
-                const result = stickers.filter(sticker => sticker.orderId === order.id) 
-                const obj = {
-                  'id': result[0].orderId,
-                  'name': order.name,
-                  'article': order.article,
-                  'stickerId': result[0].partB ,
-                  'warehouseId': order.warehouseId
+     useEffect(()=> {
+      const key = {
+        'Client-Id': localStorage.clientId,
+        'Api-Key': localStorage.apiKey
+      };
+      console.log(key)
+      getAllLogs().then(logs =>{ 
+        if( key['Client-Id'] == 1) { 
+          console.log(ordersWB)
+          const data = localStorage.data
+          const dateFrom = `${data}T00:00:00.000Z`
+          const dateTo = `${data}T23:59:59Z`
+          getAllOrdersWB(dateFrom, dateTo, localStorage.apiKey).then(ordersWB => { 
+            const res = ordersWB.map(item =>{
+              console.log(logs)
+              console.log(item)
+              const filtRes = logs.find(log => log.comment == item.id)
+              console.log(filtRes)
+              
+              if(filtRes){
+                return{
+                  ...item, packed: true
                 }
-                return obj
+              }else{
+                return item
+              }
+            })
+            console.log(res)
+  
+            getInfoProducts().then(allProducts => {
+              // Перебираем заказы и сравниваем и фильтруя их по артикулам выводим их названия
+              const resOrders = res.map(order => {
+                console.log(order)
+                const resProd = allProducts.filter(product => product.article === order.article ) 
+                if(resProd.length){  
+                  resProd[0].id = order.id
+                  resProd[0].warehouseId = order.warehouseId  
+                  resProd[0].packed = order.packed
+                  return resProd[0]
+                }
               })
-              setOrdersWB(readyOrders)
+              // Получаем id каждого заказа
+              const arrId = resOrders.map(item => item.id)
+              // Получаем стикеры каждого заказа
+              getStickersWB(localStorage.apiKey, JSON.stringify({'orders':arrId})).then(stickers => {
+                console.log(stickers)
+                  // Номер стикера теперь прикрепляем к каждому заказу формируя массив закозов со всеми данными
+                  const readyOrders = resOrders.map(order =>{
+                    const result = stickers.filter(sticker => sticker.orderId === order.id) 
+                    console.log(result)
+                    const obj = {
+                      'id': result[0].orderId,
+                      'name': order.name,
+                      'article': order.article,
+                      'stickerId': result[0].partB ,
+                      'warehouseId': order.warehouseId,
+                      'packed': order.packed
+                    }
+                    return obj
+                  })
+                  setOrdersWB(readyOrders)
+              })
+        
+            })  
           })
+  
+          
+        }else{
+          getAllOrders(formData, key).then(orders => { 
+           
+              const res = orders.map(order => {
+                const filtRes = logs.find(log => log.comment === order.postingNumber)
+                if(filtRes){
+                  return{
+                    ...order, packed: true
+                  }
+                }else{
+                  return order
+                }
     
-        }) 
+              })
+              setAllOrders(res)
+         
       })
-    }else{
+        }
+      })
+         
+    }, [localStorage.clientId])
+
+
+  const onLoadingProducts = (data = localStorage.data) => {
+ 
+    const arr = [];
+ 
       getAllOrders(formData, headersOzon).then(setOrders);
-    }
+     
   };
 
 
@@ -101,7 +155,7 @@ function App() {
     <BrowserRouter>
       <Routes>
         
-        <Route path="/" element={<ListOrder props={orders} ordersWB={ordersWB} date={date} setDate={setDate} onLoadingProducts={onLoadingProducts} headersOzon={headersOzon} />} />
+        <Route path="/" element={<ListOrder props={allOrders} ordersWB={ordersWB} date={date} setDate={setDate} onLoadingProducts={onLoadingProducts} headersOzon={headersOzon} />} />
         
         <Route path="/table" element={<Table basketsCompl={basketsCompl} props={product} date={date} setDate={setDate} onLoadingProducts={onLoadingProducts}  />} />
         

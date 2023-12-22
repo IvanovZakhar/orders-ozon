@@ -30,11 +30,12 @@ const ListOrder = ({props, onLoadingProducts, date, setDate, headersOzon, orders
             productArt,productName,
             productPrice,
             quantity,
-            warehouse} = item;
+            warehouse, 
+            packed} = item;
   
             return(
    
-                <tr className='list-order__item' key={item.postingNumber}>
+                <tr className='list-order__item' key={item.postingNumber} style={{backgroundColor: `${packed ? 'green' : null}`}}>
                     <td className='list-order__item'>{i+=1}</td>
                     <td className='list-order__item posting-number'>{postingNumber}</td>
                     <td className='list-order__item'>{`${date.slice(8, 10)}.${date.slice(5, 7)}.${date.slice(0, 4)}`}</td>
@@ -136,7 +137,7 @@ const ListOrder = ({props, onLoadingProducts, date, setDate, headersOzon, orders
           </tr>
         ));
       }
-      
+      console.log(ordersWB)
 const productTotal = props ? colculateTotalProducts(props) : null;
    const dateOrders = props[0] ? `${props[0].date.slice(8, 10)}.${props[0].date.slice(5, 7)}.${props[0].date.slice(0, 4)}` : 'Нет отправлений';
   
@@ -145,7 +146,7 @@ const productTotal = props ? colculateTotalProducts(props) : null;
              <NavLink onLoadingProducts={onLoadingProducts} date={date} setDate={setDate} getLabels={getLabels} labels={labels} setName={setName}/>
             <div id='canvas'>
                 <h1>{localStorage.nameCompany}</h1>
-                {localStorage.nameCompany === "WB" ? <PageWB ordersWB={ordersWB}/> : <Page elem={elem} productTotal={productTotal} dateOrders={dateOrders}/> }
+                {ordersWB.length ? <PageWB ordersWB={ordersWB}/> : <Page elem={elem} productTotal={productTotal} dateOrders={dateOrders}/> }
             </div>
             <button onClick={saveAsPDF}>Сохранить как PDF</button>
             </>
@@ -197,6 +198,7 @@ const Page = ({elem, productTotal, dateOrders}) => {
 }
 
 const PageWB = ({ordersWB}) => {
+    console.log(ordersWB)
     const Barcode = ({barcodeOrders}) => {
         const options = {
             value: `${barcodeOrders}`,
@@ -234,8 +236,9 @@ const PageWB = ({ordersWB}) => {
                     </thead>
                     <tbody>
                         {ordersWB.map((order, i) => {
+                            console.log(order)
                             return(
-                            <tr className='list-order__item' key={i}>
+                            <tr className='list-order__item' key={i} style={{backgroundColor: `${order.packed ? 'green' : null}`}}>
                                 <td className='list-order__item'>{i+=1}</td>
                                 <td className='list-order__item posting-number'>{<Barcode barcodeOrders={`WB${order.id}`}/>}</td>
                                 <td className='list-order__item'> {order.stickerId}</td>

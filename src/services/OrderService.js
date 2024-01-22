@@ -22,7 +22,12 @@ const useOrderService = () => {
         return res
     }
  
-
+    const getAllOrdersYandex = async () => { 
+      
+        const res = await request(`https://f9fd09879062.vps.myjino.ru:49256/yandex-orders`, 'GET');
+         
+        return res.orders
+    }
  
     const getAllOrdersWB = async (dateFrom, dateTo, apiKey) => { 
         const headersWB = {  
@@ -109,7 +114,18 @@ const useOrderService = () => {
 
 
 
-    return {loading, error, clearError, getAllOrders, getInfoProducts, getBaskets , getAllProducts, updateData, getLabelOzon, getAllOrdersWB, getStickersWB, getAllLogs}
+    return {loading, error, 
+            clearError, 
+            getAllOrders, 
+            getInfoProducts, 
+            getBaskets , 
+            getAllProducts, 
+            updateData, 
+            getLabelOzon, 
+            getAllOrdersWB, 
+            getStickersWB, 
+            getAllLogs, 
+            getAllOrdersYandex}
 }
 
 export default useOrderService;

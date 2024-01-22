@@ -32,16 +32,18 @@ const ListOrder = ({props, onLoadingProducts, date, setDate, headersOzon, orders
             quantity,
             warehouse, 
             packed} = item;
-  
+            console.log(date)
             return(
    
                 <tr className='list-order__item' key={item.postingNumber} style={{backgroundColor: `${packed ? 'green' : null}`}}>
                     <td className='list-order__item'>{i+=1}</td>
                     <td className='list-order__item posting-number'>{postingNumber}</td>
-                    <td className='list-order__item'>{`${date.slice(8, 10)}.${date.slice(5, 7)}.${date.slice(0, 4)}`}</td>
+                    <td className='list-order__item'>{date.length > 10 ? 
+                                                        `${date.slice(8, 10)}.${date.slice(5, 7)}.${date.slice(0, 4)}` : 
+                                                        `${date.slice(0, 2)}.${date.slice(3, 5)}.${date.slice(6, 10)}`}</td>
                     <td className='productName list-order__item'>{productName}</td>
                     <td className='list-order__item'>{productArt}</td>
-                    <td className='list-order__item'>{productPrice.slice(0, -5)}</td>
+                    <td className='list-order__item'>{productPrice.length > 7 ? productPrice.slice(0, -5) : productPrice}</td>
                     <td className='list-order__item'>{quantity}</td>
                     <td className='warehouse list-order__item'>{warehouse.slice(0, 8)}</td>
                 </tr>
@@ -139,7 +141,7 @@ const ListOrder = ({props, onLoadingProducts, date, setDate, headersOzon, orders
       }
       console.log(ordersWB)
 const productTotal = props ? colculateTotalProducts(props) : null;
-   const dateOrders = props[0] ? `${props[0].date.slice(8, 10)}.${props[0].date.slice(5, 7)}.${props[0].date.slice(0, 4)}` : 'Нет отправлений';
+   const dateOrders = props[0] ? props[0].date : 'Нет отправлений';
   
     return(
         <>
@@ -164,7 +166,9 @@ const Page = ({elem, productTotal, dateOrders}) => {
                             <th className='list-order__item'>№</th>
                             <th className='list-order__item'>Номер отправления</th>
                             <th className='list-order__item'>Дата отгрузки</th>
-                            <th className='list-order__item date'>{dateOrders}</th>
+                            <th className='list-order__item date'>{dateOrders.length > 10 ? 
+                                                        `${dateOrders.slice(8, 10)}.${dateOrders.slice(5, 7)}.${dateOrders.slice(0, 4)}` : 
+                                                        `${dateOrders.slice(0, 2)}.${dateOrders.slice(3, 5)}.${dateOrders.slice(6, 10)}`}</th>
                             <th className='art list-order__item'>Артикул</th>
                             <th className='list-order__item'>Стоимость</th>
                             <th className='list-order__item'>Кол-во шт.</th>

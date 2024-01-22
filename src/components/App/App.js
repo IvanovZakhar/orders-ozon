@@ -18,7 +18,7 @@ function App() {
   const [ordersWB, setOrdersWB] = useState([])
   const [logs, setLogs] = useState([])
   const [allOrders, setAllOrders] = useState([])
-  const { getAllOrders, getInfoProducts, getBaskets, getAllProducts, getAllOrdersWB, getStickersWB, getAllLogs } = useOrderService();
+  const { getAllOrders, getInfoProducts, getBaskets, getAllProducts, getAllOrdersWB, getStickersWB, getAllLogs, getAllOrdersYandex } = useOrderService();
 
  
 
@@ -116,6 +116,27 @@ function App() {
           })
   
           
+        }else if(localStorage.nameCompany === 'Яндекс'){
+          getAllOrdersYandex().then(data => {
+            const processOrders = data.filter(item => item.status === 'PROCESSING' && 
+                                                      item.delivery.shipments[0].shipmentDate === `${localStorage.data.slice(8, 10)}-${localStorage.data.slice(5, 7)}-${localStorage.data.slice(0, 4)}`) 
+            console.log(processOrders)
+            const orders = processOrders.reduce((result, order) => {
+                const orderItems = order.items.map(item => ({
+                    postingNumber: order.id,
+                    date: order.delivery.shipments[0].shipmentDate,
+                    productArt: item.offerId,
+                    productName: item.offerName,
+                    quantity: item.count,
+                    productPrice: item.price,
+                    warehouse: 'Яндекс'
+                }));
+        
+                return [...result, ...orderItems];
+            }, []);
+ 
+        setAllOrders(orders);
+        });
         }else{
           getAllOrders(formData, key).then(orders => { 
            

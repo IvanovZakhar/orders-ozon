@@ -28,28 +28,28 @@ const useOrderService = () => {
          
         return res.orders
     }
+
+    const getStickersOrdersYandex = async (orderId) => { 
+      
+        const res = await request(`https://f9fd09879062.vps.myjino.ru:49256/yandex-stickers/${orderId}`, 'GET');
+         
+        return res
+    }
  
     const getAllOrdersWB = async (dateFrom, dateTo, apiKey) => { 
-        const headersWB = {  
-            "Authorization": `${apiKey}`,
-            "Content-Type": "application/json"
-         } 
-         console.log(dateFrom)
-         console.log(dateTo)
+      
         const unixDateFrom = getNewDate(dateFrom)
         const unixDateTo = getNewDate(dateTo)
-        const res = await request(`https://suppliers-api.wildberries.ru/api/v3/orders?limit=50&next=0&dateFrom=${unixDateFrom}&dateTo=${unixDateTo}`, 'GET', null, headersWB);
-            console.log(res)
+        const res = await request(`https://f9fd09879062.vps.myjino.ru:49256/wb-orders/${unixDateFrom}/${unixDateTo}`, 'GET', null );
+         console.log(res)
         return res.orders
     }
     const getStickersWB = async (apiKey, body) => { 
-        const headersWB = {  
-            "Authorization": `${apiKey}`,
-            "Content-Type": "application/json"
-         } 
+        
+        
          
-        const res = await request(`https://suppliers-api.wildberries.ru/api/v3/orders/stickers?type=png&width=58&height=40`, 'POST', body, headersWB);
-           
+        const res = await request(`https://f9fd09879062.vps.myjino.ru:49256/wb-stickers`, 'POST', body);
+           console.log(res)
         return res.stickers
     }
 
@@ -125,7 +125,8 @@ const useOrderService = () => {
             getAllOrdersWB, 
             getStickersWB, 
             getAllLogs, 
-            getAllOrdersYandex}
+            getAllOrdersYandex,
+            getStickersOrdersYandex}
 }
 
 export default useOrderService;

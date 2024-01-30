@@ -9,7 +9,7 @@ import Button from 'react-bootstrap/Button';
 import Offcanvas from 'react-bootstrap/Offcanvas';
 import './Nav-link.scss';
 
-const NavLink = ( {onLoadingProducts, getLabels, labels, setName} ) => {
+const NavLink = ( {onLoadingProducts, getLabels, labels, setName, onGetStickersYandex} ) => {
   
   const [show, setShow] = useState(false);
   // const [dateNav, setNavDate] = useState()
@@ -77,7 +77,14 @@ const NavLink = ( {onLoadingProducts, getLabels, labels, setName} ) => {
                     </Button>
                 </Form>
                   <div className='labels'>
-                      <Button className='labels-btn' onClick={() => getLabels()}> Получить наклейки</Button>
+                      <Button className='labels-btn' onClick={() =>{
+                       
+                         if(localStorage.nameCompany === 'Яндекс'){
+                          onGetStickersYandex()
+                         }else if(localStorage.nameCompany === 'Арсенал' || localStorage.nameCompany === 'ЦМА'){
+                          getLabels()
+                         }
+                         }}> Получить наклейки</Button>
                       {labels ? <span onClick={() => window.open(labels)}>Скачать</span> : null}
                   </div>
 

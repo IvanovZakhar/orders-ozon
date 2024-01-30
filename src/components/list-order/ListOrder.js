@@ -5,11 +5,12 @@ import './ListOrder.scss'
 import React from 'react';
 import jsPDF from 'jspdf';
 import html2canvas from 'html2canvas';
-import { useBarcode } from 'next-barcode';
+import { useBarcode } from 'next-barcode'; 
+import { saveAs } from 'file-saver';
 
 const ListOrder = ({props, onLoadingProducts, date, setDate, headersOzon, ordersWB}) => {
 
-    const {getLabelOzon} = useOrderService()
+    const {getLabelOzon, getStickersOrdersYandex} = useOrderService()
     const [labels, setLabels] = useState();
     const [name, setName] = useState('')
     const compare = (a, b) => {
@@ -122,6 +123,50 @@ const ListOrder = ({props, onLoadingProducts, date, setDate, headersOzon, orders
     
     }
 
+
+    async function onGetStickersYandex() {
+          getStickersOrdersYandex(props[0].postingNumber).then(pdfData => {  
+            console.log(pdfData)
+       // Преобразование строки в бинарные данные
+        const pdfBytes = new Uint8Array(pdfData.length);
+        for (let i = 0; i < pdfData.length; i++) {
+        pdfBytes[i] = pdfData.charCodeAt(i);
+        }
+
+        // Создание Blob и ссылки для скачивания
+        const blob = new Blob([pdfBytes], { type: 'application/pdf' });
+        const link = document.createElement('a');
+        link.href = URL.createObjectURL(blob);
+        link.download = 'output.pdf';
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+          })
+      
+      }
+      
+   
+      
+      
+      // Функция для очистки строки base64
+      function cleanBase64(base64) {
+        return base64.replace(/[^A-Za-z0-9+/=]/g, '');
+      }
+      
+      
+      // Функция для преобразования base64 в Blob
+      function base64ToBlob(base64, contentType) {
+        const byteCharacters = atob(base64);
+        const byteArray = new Uint8Array(byteCharacters.length);
+      
+        for (let i = 0; i < byteCharacters.length; i++) {
+          byteArray[i] = byteCharacters.charCodeAt(i);
+        }
+      
+        return new Blob([byteArray], { type: contentType });
+      }
+
+      
     function colculateTotalProducts(product) {
         const summary = product.reduce((accumulator, item) =>
           Object.assign(accumulator, {
@@ -145,17 +190,17 @@ const productTotal = props ? colculateTotalProducts(props) : null;
   
     return(
         <>
-             <NavLink onLoadingProducts={onLoadingProducts} date={date} setDate={setDate} getLabels={getLabels} labels={labels} setName={setName}/>
+             <NavLink onLoadingProducts={onLoadingProducts} date={date} setDate={setDate} getLabels={getLabels} labels={labels} setName={setName} onGetStickersYandex={onGetStickersYandex}/>
             <div id='canvas'>
                 <h1>{localStorage.nameCompany}</h1>
-                {ordersWB.length ? <PageWB ordersWB={ordersWB}/> : <Page elem={elem} productTotal={productTotal} dateOrders={dateOrders}/> }
+                {ordersWB.length ? <PageWB ordersWB={ordersWB}/> : <PageOZN elem={elem} productTotal={productTotal} dateOrders={dateOrders}/> }
             </div>
             <button onClick={saveAsPDF}>Сохранить как PDF</button>
             </>
     )
 }
 
-const Page = ({elem, productTotal, dateOrders}) => {
+const PageOZN = ({elem, productTotal, dateOrders}) => {
     
     return(
         <>

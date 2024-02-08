@@ -6,13 +6,15 @@ import React from 'react';
 import jsPDF from 'jspdf';
 import html2canvas from 'html2canvas';
 import { useBarcode } from 'next-barcode'; 
+import {  PDFDocument, PDFName } from 'pdf-lib';
 import { saveAs } from 'file-saver';
 
-const ListOrder = ({props, onLoadingProducts, date, setDate, headersOzon, ordersWB}) => {
+const ListOrder = ({props, onLoadingProducts, date, setDate, headersOzon, ordersWB, stickersWB}) => {
 
     const {getLabelOzon, getStickersOrdersYandex} = useOrderService()
     const [labels, setLabels] = useState();
     const [name, setName] = useState('')
+    const [stickersYandex, setStickersYandex] = useState([])
     const compare = (a, b) => {
         if (a.productArt < b.productArt) {
           return -1;
@@ -32,8 +34,7 @@ const ListOrder = ({props, onLoadingProducts, date, setDate, headersOzon, orders
             productPrice,
             quantity,
             warehouse, 
-            packed} = item;
-            console.log(date)
+            packed} = item; 
             return(
    
                 <tr className='list-order__item' key={item.postingNumber} style={{backgroundColor: `${packed ? 'green' : null}`}}>
@@ -94,17 +95,14 @@ const ListOrder = ({props, onLoadingProducts, date, setDate, headersOzon, orders
     
             
         getLabelOzon('https://api-seller.ozon.ru/v1/posting/fbs/package-label/create', 'POST', JSON.stringify(body), headersOzon)
-        .then(data => {
-            console.log(data);
+        .then(data => { 
             const taskId = {
                 "task_id": data.result.task_id
-            };
-            console.log(taskId);
+            }; 
     
             const interval = setInterval(() => {
                 getLabelOzon('https://api-seller.ozon.ru/v1/posting/fbs/package-label/get', 'POST', JSON.stringify(taskId), headersOzon)
-                    .then(res => {
-                        console.log(res);
+                    .then(res => { 
                         if (res.result.status === 'completed') {
                             clearInterval(interval);
                             setLabels(res.result.file_url);
@@ -124,48 +122,111 @@ const ListOrder = ({props, onLoadingProducts, date, setDate, headersOzon, orders
     }
 
 
-    async function onGetStickersYandex() {
-          getStickersOrdersYandex(props[0].postingNumber).then(pdfData => {  
-            console.log(pdfData)
-       // Преобразование строки в бинарные данные
-        const pdfBytes = new Uint8Array(pdfData.length);
-        for (let i = 0; i < pdfData.length; i++) {
-        pdfBytes[i] = pdfData.charCodeAt(i);
-        }
+async function onGetStickersYandex(objectsArray = props) {
+       await props.forEach(prop => {
+            getStickersOrdersYandex(prop.postingNumber)   
+              .then(sticker => {
+                    // Вызываем функцию и передаем ей номер поставки
+                
+                      // Проверяем успешность ответа
+                      if (!sticker.ok) {
+                        throw new Error('Failed to download file');
+                      }
 
-        // Создание Blob и ссылки для скачивания
-        const blob = new Blob([pdfBytes], { type: 'application/pdf' });
-        const link = document.createElement('a');
-        link.href = URL.createObjectURL(blob);
-        link.download = 'output.pdf';
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
-          })
-      
-      }
-      
+                      // Получаем тип контента из заголовков
+                      const contentType = sticker.headers.get('Content-Type');
+                      
+                      // Создаем объект Blob из полученных данных
+                      return sticker.blob().then(blob => {
+                        // Создаем объект URL для Blob
+                        const url = window.URL.createObjectURL(blob);
+                        setStickersYandex(prevSticker => [...prevSticker, url])
+                        // // Открываем PDF-файл в новой вкладке браузера
+                        // window.open(url, '_blank');
+                      });
+              
+              })
+      }) 
+
+
+}
+
+async function mergePDFs(pdfUrls) {
+  const mergedPdf = await PDFDocument.create();
+
+  for (const url of pdfUrls) {
+      const pdfBytes = await fetch(url).then(res => res.arrayBuffer());
+      const pdfDoc = await PDFDocument.load(pdfBytes);
+
+      const copiedPages = await mergedPdf.copyPages(pdfDoc, pdfDoc.getPageIndices());
+      copiedPages.forEach(page => {
+          mergedPdf.addPage(page);
+      });
+  }
+
+  return mergedPdf;
+}
+     
+const onDownlloadStickersYandex = () => { 
+  mergePDFs(stickersYandex).then(mergedPdf => {
+    mergedPdf.saveAsBase64({ dataUri: true }).then(function(base64DataUri) {
+        const a = document.createElement('a');
+        a.href = base64DataUri;
+        a.download = 'merged_document.pdf';
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+
+        console.log('Объединенный PDF-документ успешно сохранен.');
+    }).catch(error => {
+        console.error('Произошла ошибка при сохранении PDF-документа:', error);
+    });
+}).catch(error => {
+    console.error('Произошла ошибка при объединении PDF-документов:', error);
+});
+}
    
-      
-      
-      // Функция для очистки строки base64
-      function cleanBase64(base64) {
-        return base64.replace(/[^A-Za-z0-9+/=]/g, '');
-      }
-      
-      
-      // Функция для преобразования base64 в Blob
-      function base64ToBlob(base64, contentType) {
-        const byteCharacters = atob(base64);
-        const byteArray = new Uint8Array(byteCharacters.length);
-      
-        for (let i = 0; i < byteCharacters.length; i++) {
-          byteArray[i] = byteCharacters.charCodeAt(i);
-        }
-      
-        return new Blob([byteArray], { type: contentType });
-      }
+async function createPDFFromImages(imageUrls) {
+  const pdfDoc = await PDFDocument.create();
 
+  for (const url of imageUrls) {
+    const imgBytes = await fetch(url).then(res => res.arrayBuffer());
+    const img = await pdfDoc.embedPng(imgBytes);
+    
+    // Создаем новую страницу для каждого изображения с размерами 58x40 миллиметров
+    const page = pdfDoc.addPage([58 * 2.83, 40 * 2.83]);
+    
+    // Масштабируем изображение, чтобы оно влезло на страницу
+    const scaleFactor = Math.min(58 * 2.83 / img.width, 40 * 2.83 / img.height);
+    const imgWidth = img.width * scaleFactor;
+    const imgHeight = img.height * scaleFactor;
+    
+    // Размещаем изображение по центру страницы
+    page.drawImage(img, {
+        x: (58 * 2.83 - imgWidth) / 2,
+        y: (40 * 2.83 - imgHeight) / 2,
+        width: imgWidth,
+        height: imgHeight,
+    });
+}
+
+  // Возвращаем буфер PDF-документа
+  return await pdfDoc.save();
+}
+
+ 
+
+const onDownlloadStickersWB = (imageUrls = stickersWB) => {
+  createPDFFromImages(imageUrls).then(pdfBytes => {
+    // Скачиваем PDF-документ
+    const blob = new Blob([pdfBytes], { type: 'application/pdf' });
+    saveAs(blob, 'merged_document.pdf');
+  }).catch(error => {
+    console.error('Произошла ошибка при создании PDF-документа:', error);
+  });
+}
+      
+ 
       
     function colculateTotalProducts(product) {
         const summary = product.reduce((accumulator, item) =>
@@ -183,14 +244,23 @@ const ListOrder = ({props, onLoadingProducts, date, setDate, headersOzon, orders
             <td className='list-order__item'>{value.quantity}</td>
           </tr>
         ));
-      }
-      console.log(ordersWB)
+      } 
 const productTotal = props ? colculateTotalProducts(props) : null;
    const dateOrders = props[0] ? props[0].date : 'Нет отправлений';
   
     return(
         <>
-             <NavLink onLoadingProducts={onLoadingProducts} date={date} setDate={setDate} getLabels={getLabels} labels={labels} setName={setName} onGetStickersYandex={onGetStickersYandex}/>
+             <NavLink onLoadingProducts={onLoadingProducts} 
+                      date={date} 
+                      setDate={setDate} 
+                      getLabels={getLabels} 
+                      labels={labels} 
+                      setName={setName} 
+                      onGetStickersYandex={onGetStickersYandex} 
+                      onDownlloadStickersYandex={onDownlloadStickersYandex} 
+                      stickersYandex={stickersYandex}
+                      stickersWB={stickersWB}
+                      onDownlloadStickersWB={onDownlloadStickersWB}/>
             <div id='canvas'>
                 <h1>{localStorage.nameCompany}</h1>
                 {ordersWB.length ? <PageWB ordersWB={ordersWB}/> : <PageOZN elem={elem} productTotal={productTotal} dateOrders={dateOrders}/> }
@@ -198,7 +268,7 @@ const productTotal = props ? colculateTotalProducts(props) : null;
             <button onClick={saveAsPDF}>Сохранить как PDF</button>
             </>
     )
-}
+    }
 
 const PageOZN = ({elem, productTotal, dateOrders}) => {
     
@@ -246,8 +316,7 @@ const PageOZN = ({elem, productTotal, dateOrders}) => {
     )
 }
 
-const PageWB = ({ordersWB}) => {
-    console.log(ordersWB)
+const PageWB = ({ordersWB}) => { 
     const Barcode = ({barcodeOrders}) => {
         const options = {
             value: `${barcodeOrders}`,
@@ -284,8 +353,7 @@ const PageWB = ({ordersWB}) => {
                         </tr>
                     </thead>
                     <tbody>
-                        {ordersWB.map((order, i) => {
-                            console.log(order)
+                        {ordersWB.map((order, i) => { 
                             return(
                             <tr className='list-order__item' key={i} style={{backgroundColor: `${order.packed ? 'green' : null}`}}>
                                 <td className='list-order__item'>{i+=1}</td>

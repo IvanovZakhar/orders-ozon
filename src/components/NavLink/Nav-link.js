@@ -9,7 +9,7 @@ import Button from 'react-bootstrap/Button';
 import Offcanvas from 'react-bootstrap/Offcanvas';
 import './Nav-link.scss';
 
-const NavLink = ( {onLoadingProducts, getLabels, labels, setName, onGetStickersYandex} ) => {
+const NavLink = ( {onLoadingProducts, getLabels, labels, setName, onGetStickersYandex, onDownlloadStickersYandex, stickersYandex, stickersWB, onDownlloadStickersWB} ) => {
   
   const [show, setShow] = useState(false);
   // const [dateNav, setNavDate] = useState()
@@ -85,7 +85,9 @@ const NavLink = ( {onLoadingProducts, getLabels, labels, setName, onGetStickersY
                           getLabels()
                          }
                          }}> Получить наклейки</Button>
-                      {labels ? <span onClick={() => window.open(labels)}>Скачать</span> : null}
+                          {stickersWB.length ?  <span onClick={() => onDownlloadStickersWB(stickersWB)}>Скачать WB </span> : null }
+                      {stickersYandex.length ? <span onClick={onDownlloadStickersYandex}>Скачать Яндекс </span> : null}
+                      {labels ? <span onClick={() => window.open(labels)}>Скачать Озон</span> : null}
                   </div>
 
                 <div className='keys'>

@@ -30,9 +30,9 @@ const useOrderService = () => {
     }
 
     const getStickersOrdersYandex = async (orderId) => { 
-      
-        const res = await request(`https://f9fd09879062.vps.myjino.ru:49256/yandex-stickers/${orderId}`, 'GET');
-         
+ 
+        const res = await request(`https://f9fd09879062.vps.myjino.ru:49256/yandex-stickers/${orderId}`, 'GET', null, {'Content-Type': 'application/pdf'}, false);
+        
         return res
     }
  
@@ -44,10 +44,7 @@ const useOrderService = () => {
          console.log(res)
         return res.orders
     }
-    const getStickersWB = async (apiKey, body) => { 
-        
-        
-         
+    const getStickersWB = async (apiKey, body) => {  
         const res = await request(`https://f9fd09879062.vps.myjino.ru:49256/wb-stickers`, 'POST', body);
            console.log(res)
         return res.stickers

@@ -4,6 +4,7 @@ import useOrderService from '../../services/OrderService';
 import Table from '../Table/Table';
 import ListOrder from '../list-order/ListOrder';
 import TestPage from '../TestPage/TestPage';
+import { PDFDocument } from 'pdf-lib';
 import './App.css';
 
 function App() {
@@ -18,7 +19,15 @@ function App() {
   const [ordersWB, setOrdersWB] = useState([])
   const [logs, setLogs] = useState([])
   const [allOrders, setAllOrders] = useState([])
-  const { getAllOrders, getInfoProducts, getBaskets, getAllProducts, getAllOrdersWB, getStickersWB, getAllLogs, getAllOrdersYandex } = useOrderService();
+  const [stickersWB, setStickersWB] = useState([]);
+  const { getAllOrders, 
+          getInfoProducts, 
+          getBaskets, 
+          getAllProducts, 
+          getAllOrdersWB, 
+          getStickersWB, 
+          getAllLogs, 
+          getAllOrdersYandex } = useOrderService();
 
  
 
@@ -93,8 +102,28 @@ function App() {
               // Получаем id каждого заказа
               const arrId = resOrders.map(item => item.id)
               // Получаем стикеры каждого заказа
-              getStickersWB(localStorage.apiKey, JSON.stringify({'orders':arrId})).then(stickers => {
+              getStickersWB(localStorage.apiKey, JSON.stringify({'orders':arrId})).then(stickers => { 
                 console.log(stickers)
+                stickers.forEach(sticker => {
+                    // Ваша строка в кодировке base64
+                    const base64String =  sticker.file
+                    // Создаем бинарные данные из строки base64
+                    const binaryString = atob(base64String);
+                    const binaryLength = binaryString.length;
+                    const bytes = new Uint8Array(binaryLength);
+                    for (var i = 0; i < binaryLength; i++) {
+                        bytes[i] = binaryString.charCodeAt(i);
+                    }
+
+                    // Создаем Blob из бинарных данных
+                    const blob = new Blob([bytes], { type: 'image/png' });
+
+                    // Создаем ссылку для загрузки изображения
+                    const url = URL.createObjectURL(blob);
+                    setStickersWB(prevSticker => [...prevSticker, url])
+                })
+ 
+
                   // Номер стикера теперь прикрепляем к каждому заказу формируя массив закозов со всеми данными
                   const readyOrders = resOrders.map(order =>{
                     const result = stickers.filter(sticker => sticker.orderId === order.id) 
@@ -158,7 +187,7 @@ function App() {
       })
          
     }, [localStorage.clientId])
-
+console.log(stickersWB)
 
   const onLoadingProducts = (data = localStorage.data) => {
  
@@ -176,7 +205,7 @@ function App() {
     <BrowserRouter>
       <Routes>
         
-        <Route path="/" element={<ListOrder props={allOrders} ordersWB={ordersWB} date={date} setDate={setDate} onLoadingProducts={onLoadingProducts} headersOzon={headersOzon} />} />
+        <Route path="/" element={<ListOrder props={allOrders} ordersWB={ordersWB} date={date} setDate={setDate} onLoadingProducts={onLoadingProducts} headersOzon={headersOzon} stickersWB={stickersWB}/>} />
         
         <Route path="/table" element={<Table basketsCompl={basketsCompl} props={product} date={date} setDate={setDate} onLoadingProducts={onLoadingProducts}  />} />
         

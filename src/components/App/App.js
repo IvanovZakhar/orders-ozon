@@ -71,11 +71,9 @@ function App() {
           const dateFrom = `${data}T00:00:00.000Z`
           const dateTo = `${data}T23:59:59Z`
           getAllOrdersWB(dateFrom, dateTo, localStorage.apiKey).then(ordersWB => { 
-            const res = ordersWB.map(item =>{
-              console.log(logs)
-              console.log(item)
-              const filtRes = logs.find(log => log.comment == item.id)
-              console.log(filtRes)
+            console.log(ordersWB)
+            const res = ordersWB.map(item =>{  
+              const filtRes = logs.find(log => log.comment == item.id) 
               
               if(filtRes){
                 return{
@@ -90,17 +88,25 @@ function App() {
             getInfoProducts().then(allProducts => {
               // Перебираем заказы и сравниваем и фильтруя их по артикулам выводим их названия
               const resOrders = res.map(order => {
-                console.log(order)
-                const resProd = allProducts.filter(product => product.article === order.article ) 
-                if(resProd.length){  
-                  resProd[0].id = order.id
-                  resProd[0].warehouseId = order.warehouseId  
-                  resProd[0].packed = order.packed
-                  return resProd[0]
+                console.log(order);
+                const resProd = allProducts.filter(product => product.article === order.article);
+                if (resProd.length) {
+                  // Создаем новый объект с обновленными данными
+                  const updatedProduct = {
+                    ...resProd[0], // Копируем свойства из существующего продукта
+                    id: order.id,
+                    warehouseId: order.warehouseId,
+                    packed: order.packed
+                  };
+                  console.log(updatedProduct);
+                  return updatedProduct;
                 }
-              })
+              });
+              
+              console.log(resOrders)
               // Получаем id каждого заказа
               const arrId = resOrders.map(item => item.id)
+              console.log(arrId)
               // Получаем стикеры каждого заказа
               getStickersWB(localStorage.apiKey, JSON.stringify({'orders':arrId})).then(stickers => { 
                 console.log(stickers)

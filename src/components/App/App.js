@@ -130,20 +130,25 @@ function App() {
                 })
  
 
-                  // Номер стикера теперь прикрепляем к каждому заказу формируя массив закозов со всеми данными
-                  const readyOrders = resOrders.map(order =>{
-                    const result = stickers.filter(sticker => sticker.orderId === order.id) 
-                    console.log(result)
-                    const obj = {
-                      'id': result[0].orderId,
-                      'name': order.name,
-                      'article': order.article,
-                      'stickerId': result[0].partB ,
-                      'warehouseId': order.warehouseId,
-                      'packed': order.packed
-                    }
-                    return obj
-                  })
+                const readyOrders = resOrders.map(order => {
+                  const result = stickers.filter(sticker => sticker.orderId === order.id);
+              
+                  if(result.length){
+                      const obj = {
+                          'id': result[0].orderId,
+                          'name': order.name,
+                          'article': order.article,
+                          'stickerId': result[0].partB ,
+                          'warehouseId': order.warehouseId,
+                          'packed': order.packed
+                      };
+                      return obj;
+                  } else {
+                      // Если result пустой, не возвращаем ничего
+                      return null;
+                  }
+              }).filter(order => order !== null); // Фильтруем, чтобы удалить все пустые элементы
+              
                   setOrdersWB(readyOrders)
               })
         

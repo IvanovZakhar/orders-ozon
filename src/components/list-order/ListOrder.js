@@ -9,7 +9,7 @@ import { useBarcode } from 'next-barcode';
 import {  PDFDocument, PDFName } from 'pdf-lib';
 import { saveAs } from 'file-saver';
 
-const ListOrder = ({props, onLoadingProducts, date, setDate, headersOzon, ordersWB, stickersWB}) => {
+const ListOrder = ({props, onLoadingProducts, date, setDate, headersOzon, ordersWB,  setOrdersWB,stickersWB,  setStickersWB}) => {
 
     const {getLabelOzon, getStickersOrdersYandex} = useOrderService()
     const [labels, setLabels] = useState();
@@ -216,7 +216,11 @@ async function createPDFFromImages(imageUrls) {
 
  
 
-const onDownlloadStickersWB = (imageUrls = stickersWB) => {
+const onDownlloadStickersWB = (imageObjects = stickersWB) => {
+  const imageUrls = imageObjects.map(imageObj => imageObj.url);
+  
+  console.log(imageUrls); // Проверяем, что получен правильный массив URL-адресов
+  
   createPDFFromImages(imageUrls).then(pdfBytes => {
     // Скачиваем PDF-документ
     const blob = new Blob([pdfBytes], { type: 'application/pdf' });
@@ -225,6 +229,7 @@ const onDownlloadStickersWB = (imageUrls = stickersWB) => {
     console.error('Произошла ошибка при создании PDF-документа:', error);
   });
 }
+
       
  
       
@@ -248,6 +253,12 @@ const onDownlloadStickersWB = (imageUrls = stickersWB) => {
 const productTotal = props ? colculateTotalProducts(props) : null;
    const dateOrders = props[0] ? props[0].date : 'Нет отправлений';
   
+
+  function deleteItemWB (id, stickerId){
+    setOrdersWB(ordersWB.filter(item => item.id !== id))
+    setStickersWB(stickersWB.filter((sticker) => sticker.id !== stickerId))
+    console.log(stickerId)
+  } 
     return(
         <>
              <NavLink onLoadingProducts={onLoadingProducts} 
@@ -263,7 +274,7 @@ const productTotal = props ? colculateTotalProducts(props) : null;
                       onDownlloadStickersWB={onDownlloadStickersWB}/>
             <div id='canvas'>
                 <h1>{localStorage.nameCompany}</h1>
-                {ordersWB.length ? <PageWB ordersWB={ordersWB}/> : <PageOZN elem={elem} productTotal={productTotal} dateOrders={dateOrders}/> }
+                {ordersWB.length ? <PageWB ordersWB={ordersWB} deleteItemWB={deleteItemWB}/> : <PageOZN elem={elem} productTotal={productTotal} dateOrders={dateOrders}/> }
             </div>
             <button onClick={saveAsPDF}>Сохранить как PDF</button>
             </>
@@ -316,7 +327,7 @@ const PageOZN = ({elem, productTotal, dateOrders}) => {
     )
 }
 
-const PageWB = ({ordersWB}) => { 
+const PageWB = ({ordersWB, deleteItemWB}) => { 
     const Barcode = ({barcodeOrders}) => {
         const options = {
             value: `${barcodeOrders}`,
@@ -355,15 +366,19 @@ const PageWB = ({ordersWB}) => {
                     <tbody>
                         {ordersWB.map((order, i) => { 
                             return(
-                            <tr className='list-order__item' key={i} style={{backgroundColor: `${order.packed ? 'green' : null}`}}>
-                                <td className='list-order__item'>{i+=1}</td>
-                                <td className='list-order__item posting-number'>{<Barcode barcodeOrders={`WB${order.id}`}/>}</td>
-                                <td className='list-order__item'> {order.stickerId}</td>
-                                <td className='productName list-order__item'>{order.name}</td>
-                                <td className='list-order__item'>{order.article}</td> 
-                                <td className='list-order__item'>1</td>
-                                <td className='warehouse list-order__item'>{order.warehouseId === 837292 ? "Уткина заводь" : "Шушары"}</td>
-                            </tr>
+                            <>
+                              <tr className='list-order__item' key={i} style={{backgroundColor: `${order.packed ? 'green' : null}`}}>
+                                  <td className='list-order__item'>{i+=1}</td>
+                                  <td className='list-order__item posting-number'>{<Barcode barcodeOrders={`WB${order.id}`}/>}</td>
+                                  <td className='list-order__item'> {order.stickerId}</td>
+                                  <td className='productName list-order__item'>{order.name}</td>
+                                  <td className='list-order__item'>{order.article}</td> 
+                                  <td className='list-order__item'>1</td>
+                                  <td className='warehouse list-order__item'>{order.warehouseId === 837292 ? "Уткина заводь" : "Шушары"}</td>
+                                  <div className='cross' onClick={() => {deleteItemWB(order.id, order.stickerId)}}>x</div>
+                              </tr>
+                          
+                            </>
                             )
                         })}
                         

@@ -1,4 +1,5 @@
 .list-order__item{
+    position: relative;
     border: 1px solid black;
     padding: 5px;
     text-align: center;
@@ -69,4 +70,16 @@ h2{
     font-weight: bold;
 }
 
- 
+ .cross{
+    position: absolute; 
+    top: -80px;
+    right: -30px;
+    font-size: 30px;
+    cursor: pointer; 
+ }
+
+ .cross:hover{
+    color: grey;
+    border-bottom: 3px solid black;  
+ }
+

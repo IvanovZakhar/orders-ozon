@@ -20,6 +20,8 @@ function App() {
   const [logs, setLogs] = useState([])
   const [allOrders, setAllOrders] = useState([])
   const [stickersWB, setStickersWB] = useState([]);
+  const [arrIdsWB, setArrIdWb] = useState([])
+  const [resOrdersWB, setResOrdersWB] = useState([])
   const { getAllOrders, 
           getInfoProducts, 
           getBaskets, 
@@ -50,6 +52,8 @@ function App() {
       translit: true,
     }
 }) 
+
+ 
   useEffect(() => {
     onLoadingProducts(); 
   }, [localStorage.data]); 
@@ -82,13 +86,11 @@ function App() {
               }else{
                 return item
               }
-            })
-            console.log(res)
+            }) 
   
             getInfoProducts().then(allProducts => {
               // Перебираем заказы и сравниваем и фильтруя их по артикулам выводим их названия
-              const resOrders = res.map(order => {
-                console.log(order);
+              const resOrders = res.map(order => { 
                 const resProd = allProducts.filter(product => product.article === order.article);
                 if (resProd.length) {
                   // Создаем новый объект с обновленными данными
@@ -97,19 +99,17 @@ function App() {
                     id: order.id,
                     warehouseId: order.warehouseId,
                     packed: order.packed
-                  };
-                  console.log(updatedProduct);
+                  }; 
                   return updatedProduct;
                 }
               });
-              
-              console.log(resOrders)
+               
               // Получаем id каждого заказа
-              const arrId = resOrders.map(item => item.id)
-              console.log(arrId)
-              // Получаем стикеры каждого заказа
+              const arrId = resOrders.map(item => item.id) 
+
               getStickersWB(localStorage.apiKey, JSON.stringify({'orders':arrId})).then(stickers => { 
                 console.log(stickers)
+                console.log('sticker')
                 stickers.forEach(sticker => {
                     // Ваша строка в кодировке base64
                     const base64String =  sticker.file
@@ -120,16 +120,17 @@ function App() {
                     for (var i = 0; i < binaryLength; i++) {
                         bytes[i] = binaryString.charCodeAt(i);
                     }
-
+            
                     // Создаем Blob из бинарных данных
                     const blob = new Blob([bytes], { type: 'image/png' });
-
+            
                     // Создаем ссылку для загрузки изображения
                     const url = URL.createObjectURL(blob);
-                    setStickersWB(prevSticker => [...prevSticker, url])
+                     
+                    setStickersWB(prevSticker => [...prevSticker, {url, id: sticker.partB}])
                 })
- 
-
+            
+            
                 const readyOrders = resOrders.map(order => {
                   const result = stickers.filter(sticker => sticker.orderId === order.id);
               
@@ -151,7 +152,6 @@ function App() {
               
                   setOrdersWB(readyOrders)
               })
-        
             })  
           })
   
@@ -209,14 +209,15 @@ console.log(stickersWB)
   };
 
 
- 
+
+console.log(ordersWB)
 
   return (
  
     <BrowserRouter>
       <Routes>
         
-        <Route path="/" element={<ListOrder props={allOrders} ordersWB={ordersWB} date={date} setDate={setDate} onLoadingProducts={onLoadingProducts} headersOzon={headersOzon} stickersWB={stickersWB}/>} />
+        <Route path="/" element={<ListOrder props={allOrders} ordersWB={ordersWB}  setOrdersWB={setOrdersWB} date={date} setDate={setDate} onLoadingProducts={onLoadingProducts} headersOzon={headersOzon} stickersWB={stickersWB}  setStickersWB={ setStickersWB}/>} />
         
         <Route path="/table" element={<Table basketsCompl={basketsCompl} props={product} date={date} setDate={setDate} onLoadingProducts={onLoadingProducts}  />} />
         

@@ -156,8 +156,8 @@ function App() {
           })
   
           
-        }else if(localStorage.nameCompany === 'Яндекс'){
-          getAllOrdersYandex().then(data => {
+        }else if(localStorage.nameCompany === 'Яндекс' || localStorage.nameCompany === 'Яндекс КГТ'){
+          getAllOrdersYandex(localStorage.clientId).then(data => {
             const processOrders = data.filter(item => item.status === 'PROCESSING' && 
                                                       item.delivery.shipments[0].shipmentDate === `${localStorage.data.slice(8, 10)}-${localStorage.data.slice(5, 7)}-${localStorage.data.slice(0, 4)}`) 
            console.log(processOrders)
@@ -198,7 +198,7 @@ function App() {
       })
          
     }, [localStorage.clientId])
-console.log(stickersWB)
+console.log(localStorage.nameCompany)
 
   const onLoadingProducts = (data = localStorage.data) => {
  

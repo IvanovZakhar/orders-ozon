@@ -22,9 +22,9 @@ const useOrderService = () => {
         return res
     }
  
-    const getAllOrdersYandex = async () => { 
+    const getAllOrdersYandex = async (clientId) => { 
       
-        const res = await request(`https://f9fd09879062.vps.myjino.ru:49256/yandex-orders`, 'GET');
+        const res = await request(`https://f9fd09879062.vps.myjino.ru:49256/yandex-orders/${clientId}`, 'GET');
          
         return res.orders
     }

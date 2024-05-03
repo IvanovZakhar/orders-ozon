@@ -43,7 +43,7 @@ function App() {
       status: 'awaiting_deliver',
       warehouse_id: [],
     },
-    limit: 100,
+    limit: 200,
     offset: 0,
     with: {
       analytics_data: true,

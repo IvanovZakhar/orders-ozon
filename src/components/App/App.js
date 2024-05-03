@@ -160,7 +160,7 @@ function App() {
           getAllOrdersYandex(localStorage.clientId).then(data => {
             const processOrders = data.filter(item => item.status === 'PROCESSING' && 
                                                       item.delivery.shipments[0].shipmentDate === `${localStorage.data.slice(8, 10)}-${localStorage.data.slice(5, 7)}-${localStorage.data.slice(0, 4)}`) 
-           console.log(processOrders)
+         
             const orders = processOrders.reduce((result, order) => {
                 const orderItems = order.items.map(item => ({
                     postingNumber: order.id,
@@ -174,7 +174,18 @@ function App() {
         
                 return [...result, ...orderItems];
             }, []); 
-        setAllOrders(orders);
+            const res = orders.map(order => {
+              const filtRes = logs.find(log => log.comment == order.postingNumber)
+              if(filtRes){
+                return{
+                  ...order, packed: true
+                }
+              }else{
+                return order
+              }
+  
+            })
+        setAllOrders(res);
         });
         }else{
           getAllOrders(formData, key).then(orders => { 

@@ -173,8 +173,7 @@ function App() {
                 }));
         
                 return [...result, ...orderItems];
-            }, []);
-            console.log(orders)
+            }, []); 
         setAllOrders(orders);
         });
         }else{

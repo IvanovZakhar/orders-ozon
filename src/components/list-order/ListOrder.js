@@ -26,7 +26,7 @@ const ListOrder = ({props, onLoadingProducts, date, setDate, headersOzon, orders
       };
 
     const readySort = props ? props.sort(compare) : null
-    console.log(labels)
+  
     const elem = readySort ? readySort.map((item, i) => {
         const {date,
             postingNumber,
@@ -52,8 +52,21 @@ const ListOrder = ({props, onLoadingProducts, date, setDate, headersOzon, orders
                
             )
     }) : null;
- 
+    
+    const sortedElemsSticker = removeDuplicatesByProperty(readySort, 'postingNumber')
 
+
+    function removeDuplicatesByProperty(array, propertyName) {
+      const unique = array.reduce((acc, current) => {
+        const x = acc.find(item => item[propertyName] === current[propertyName]);
+        if (!x) {
+          return acc.concat([current]);
+        } else {
+          return acc;
+        }
+      }, []);
+      return unique;
+    }
     function getEuropeanFormattedDate() {
         const today = new Date();
       
@@ -122,34 +135,31 @@ const ListOrder = ({props, onLoadingProducts, date, setDate, headersOzon, orders
     }
 
 
-async function onGetStickersYandex(objectsArray = props) {
-       await props.forEach(prop => {
-            getStickersOrdersYandex(prop.postingNumber)   
-              .then(sticker => {
-                    // Вызываем функцию и передаем ей номер поставки
-                
-                      // Проверяем успешность ответа
-                      if (!sticker.ok) {
-                        throw new Error('Failed to download file');
-                      }
-
-                      // Получаем тип контента из заголовков
-                      const contentType = sticker.headers.get('Content-Type');
-                      
-                      // Создаем объект Blob из полученных данных
-                      return sticker.blob().then(blob => {
-                        // Создаем объект URL для Blob
-                        const url = window.URL.createObjectURL(blob);
-                        setStickersYandex(prevSticker => [...prevSticker, url])
-                        // // Открываем PDF-файл в новой вкладке браузера
-                        // window.open(url, '_blank');
-                      });
-              
-              })
-      }) 
-
-
-}
+    async function onGetStickersYandex(objectsArray = sortedElemsSticker) { 
+      const stickerURLs = []; // массив для собирания урлов стикеров в правильном порядке
+  
+    for (const prop of objectsArray) {
+      try {
+        const sticker = await getStickersOrdersYandex(prop.postingNumber);
+        if (!sticker.ok) {
+          throw new Error('Failed to download file');
+        }
+        console.log(prop.postingNumber);
+        console.log(sticker);
+        const contentType = sticker.headers.get('Content-Type');
+        const blob = await sticker.blob();
+        const url = window.URL.createObjectURL(blob);
+        stickerURLs.push(url); // сохраняем URL в массив
+        // setStickersYandex(prevSticker => [...prevSticker, url]);
+      } catch (error) {
+        console.error(error); // обработка ошибок запроса
+      }
+    }
+  
+    // здесь можно вызвать setStickersYandex один раз для всего массива URL
+    setStickersYandex(stickerURLs);
+  }
+  
 
 async function mergePDFs(pdfUrls) {
   const mergedPdf = await PDFDocument.create();

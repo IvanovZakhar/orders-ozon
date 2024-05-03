@@ -328,6 +328,7 @@ const PageOZN = ({elem, productTotal, dateOrders}) => {
 }
 
 const PageWB = ({ordersWB, deleteItemWB}) => { 
+  console.log(ordersWB)
     const Barcode = ({barcodeOrders}) => {
         const options = {
             value: `${barcodeOrders}`,
@@ -336,8 +337,7 @@ const PageWB = ({ordersWB, deleteItemWB}) => {
               height: '50',
               width: '2', 
               display: 'flex',
-              justifyContent: 'center',
-              fontSize: '0'
+              justifyContent: 'center', 
             }
           };
         const { inputRef } = useBarcode(options);

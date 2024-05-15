@@ -21,7 +21,7 @@ function App() {
   const [allOrders, setAllOrders] = useState([])
   const [stickersWB, setStickersWB] = useState([]);
   const [arrIdsWB, setArrIdWb] = useState([])
-  const [resOrdersWB, setResOrdersWB] = useState([])
+  const [productsForOrdersBarcode, setProductsForOrdersBarcode] = useState([])
   const { getAllOrders, 
           getInfoProducts, 
           getBaskets, 
@@ -29,7 +29,8 @@ function App() {
           getAllOrdersWB, 
           getStickersWB, 
           getAllLogs, 
-          getAllOrdersYandex } = useOrderService();
+          getAllOrdersYandex, 
+          getProductsForOrdersBarcode } = useOrderService();
 
  
 
@@ -53,6 +54,10 @@ function App() {
     }
 }) 
 
+
+useEffect(()=> {
+  getProductsForOrdersBarcode().then(setProductsForOrdersBarcode)
+}, [])
  
   useEffect(() => {
     onLoadingProducts(); 
@@ -66,16 +71,14 @@ function App() {
       const key = {
         'Client-Id': localStorage.clientId,
         'Api-Key': localStorage.apiKey
-      };
-      console.log(key)
+      }; 
       getAllLogs().then(logs =>{ 
-        if( key['Client-Id'] == 1) { 
-          console.log(ordersWB)
+        if( key['Client-Id'] == 1) {  
           const data = localStorage.data
           const dateFrom = `${data}T00:00:00.000Z`
           const dateTo = `${data}T23:59:59Z`
           getAllOrdersWB(dateFrom, dateTo, localStorage.apiKey).then(ordersWB => { 
-            console.log(ordersWB)
+ 
             const res = ordersWB.map(item =>{  
               const filtRes = logs.find(log => log.comment == item.id) 
               
@@ -108,8 +111,7 @@ function App() {
               const arrId = resOrders.map(item => item.id) 
 
               getStickersWB(localStorage.apiKey, JSON.stringify({'orders':arrId})).then(stickers => { 
-                console.log(stickers)
-                console.log('sticker')
+ 
                 stickers.forEach(sticker => {
                     // Ваша строка в кодировке base64
                     const base64String =  sticker.file
@@ -207,9 +209,7 @@ function App() {
         }
       })
          
-    }, [localStorage.clientId])
-console.log(localStorage.nameCompany)
-
+    }, [localStorage.clientId]) 
   const onLoadingProducts = (data = localStorage.data) => {
  
     const arr = [];
@@ -219,15 +219,23 @@ console.log(localStorage.nameCompany)
   };
 
 
-
-console.log(ordersWB)
+ 
 
   return (
  
     <BrowserRouter>
       <Routes>
         
-        <Route path="/" element={<ListOrder props={allOrders} ordersWB={ordersWB}  setOrdersWB={setOrdersWB} date={date} setDate={setDate} onLoadingProducts={onLoadingProducts} headersOzon={headersOzon} stickersWB={stickersWB}  setStickersWB={ setStickersWB}/>} />
+        <Route path="/" element={<ListOrder 
+                                            props={allOrders} 
+                                            ordersWB={ordersWB}  
+                                            setOrdersWB={setOrdersWB} 
+                                            date={date} setDate={setDate} 
+                                            onLoadingProducts={onLoadingProducts} 
+                                            headersOzon={headersOzon} 
+                                            stickersWB={stickersWB}  
+                                            setStickersWB={setStickersWB}
+                                            productsForOrdersBarcode={productsForOrdersBarcode}/>} />
         
         <Route path="/table" element={<Table basketsCompl={basketsCompl} props={product} date={date} setDate={setDate} onLoadingProducts={onLoadingProducts}  />} />
         

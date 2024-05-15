@@ -67,6 +67,16 @@ const useOrderService = () => {
         const res = await request(url, method,  body, headersOzon,);
     }
 
+    const updateProductQuantity = async (data) => {
+        const res = await request(
+            `${_url}/update/products-for-warehouse/updateQuantity`, 
+            'POST', 
+            JSON.stringify(data) 
+            )
+
+        return res
+    }
+
     const getBaskets = async (product = 'baskets') => {
         const res = await request(`http://localhost:3002/${product}`, 'GET');
         return res 
@@ -93,6 +103,11 @@ const useOrderService = () => {
                                     'GET')
     
         return res
+    }
+
+    const getProductsForOrdersBarcode = async () => {
+        const res = await request(`${_url}/products-for-orders-barcode`, 'GET');
+    return res 
     }
  
     const transformProduct = (product) => {
@@ -123,7 +138,9 @@ const useOrderService = () => {
             getStickersWB, 
             getAllLogs, 
             getAllOrdersYandex,
-            getStickersOrdersYandex}
+            getStickersOrdersYandex,
+            getProductsForOrdersBarcode,
+            updateProductQuantity}
 }
 
 export default useOrderService;

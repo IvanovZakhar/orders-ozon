@@ -8,13 +8,50 @@ import html2canvas from 'html2canvas';
 import { useBarcode } from 'next-barcode'; 
 import {  PDFDocument, PDFName } from 'pdf-lib';
 import { saveAs } from 'file-saver';
+import Alert from 'react-bootstrap/Alert';
 
-const ListOrder = ({props, onLoadingProducts, date, setDate, headersOzon, ordersWB,  setOrdersWB,stickersWB,  setStickersWB}) => {
-
-    const {getLabelOzon, getStickersOrdersYandex} = useOrderService()
+const ListOrder = ({props, onLoadingProducts, date, setDate, headersOzon, ordersWB,  setOrdersWB,stickersWB,  setStickersWB, productsForOrdersBarcode}) => {
+ 
+    const {getLabelOzon, getStickersOrdersYandex, updateProductQuantity} = useOrderService()
     const [labels, setLabels] = useState();
     const [name, setName] = useState('')
     const [stickersYandex, setStickersYandex] = useState([])
+    const [notReadyProducts, setNotReadyProducts] = useState([])
+    const [requestPucked, setRequestPucked] = useState([])
+
+    useEffect(() => {
+      const notReadyProducts = props.filter(prop => !prop.packed)
+
+      const res = notReadyProducts.flatMap(order => {
+          const product = productsForOrdersBarcode.filter(product => product.article == order.productArt) 
+          if(product.length){
+           return product[0].orders.map(orderProd => { 
+              const quantity = orderProd.quantity * order.quantity 
+              return{
+                ...orderProd, 
+                postingNumber: order.postingNumber,
+                quantity 
+              }
+            })
+           
+          }
+      })
+      setNotReadyProducts(res)
+
+    }, [props])
+
+    function puckedProducts (){
+      notReadyProducts.forEach(product => {
+        console.log(product)
+        updateProductQuantity({ comment: `${product.postingNumber}`, productsToUpdate: [product] })
+          .then(res => {
+            console.log(res)
+            setRequestPucked(prevRequest =>  [...prevRequest, res[0]])})
+          .catch(er => console.log(er)) 
+      }) 
+    }
+    console.log(requestPucked)
+
     const compare = (a, b) => {
         if (a.productArt < b.productArt) {
           return -1;
@@ -24,6 +61,9 @@ const ListOrder = ({props, onLoadingProducts, date, setDate, headersOzon, orders
         }
         return 0;
       };
+
+
+
 
     const readySort = props ? props.sort(compare) : null
   
@@ -269,6 +309,9 @@ const productTotal = props ? colculateTotalProducts(props) : null;
     setStickersWB(stickersWB.filter((sticker) => sticker.id !== stickerId))
     console.log(stickerId)
   } 
+
+
+
     return(
         <>
              <NavLink onLoadingProducts={onLoadingProducts} 
@@ -286,8 +329,19 @@ const productTotal = props ? colculateTotalProducts(props) : null;
                 <h1>{localStorage.nameCompany}</h1>
                 {ordersWB.length ? <PageWB ordersWB={ordersWB} deleteItemWB={deleteItemWB}/> : <PageOZN elem={elem} productTotal={productTotal} dateOrders={dateOrders}/> }
             </div>
-            <button onClick={saveAsPDF}>Сохранить как PDF</button>
-            </>
+            <div className='buttons'>
+              <button onClick={saveAsPDF}>Сохранить как PDF</button>
+              <button onClick={puckedProducts}>Упаковать товары</button>
+            </div>
+
+            {requestPucked.map(item => {
+              return (
+                <Alert variant="success" style={{marginTop: '20px'}}> 
+                   {`Продукт ${item.article} обновлен`}
+              </Alert>
+              )
+            })}
+        </>
     )
     }
 

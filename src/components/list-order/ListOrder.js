@@ -9,6 +9,7 @@ import { useBarcode } from 'next-barcode';
 import {  PDFDocument, PDFName } from 'pdf-lib';
 import { saveAs } from 'file-saver';
 import Alert from 'react-bootstrap/Alert';
+import Button from 'react-bootstrap/Button';
 
 const ListOrder = ({props, onLoadingProducts, date, setDate, headersOzon, ordersWB,  setOrdersWB,stickersWB,  setStickersWB, productsForOrdersBarcode}) => {
  
@@ -21,6 +22,8 @@ const ListOrder = ({props, onLoadingProducts, date, setDate, headersOzon, orders
 
     useEffect(() => {
       const notReadyProducts = props.filter(prop => !prop.packed)
+      const notReadyProductsWB = ordersWB.filter(prop => !prop.packed)
+
 
       const res = notReadyProducts.flatMap(order => {
           const product = productsForOrdersBarcode.filter(product => product.article == order.productArt) 
@@ -36,21 +39,35 @@ const ListOrder = ({props, onLoadingProducts, date, setDate, headersOzon, orders
            
           }
       })
-      setNotReadyProducts(res)
 
-    }, [props])
+      const resWb = notReadyProductsWB.flatMap(order => {
+        const product = productsForOrdersBarcode.filter(product => product.article == order.article) 
+        if(product.length){
+         return product[0].orders.map(orderProd => { 
+            const quantity = orderProd.quantity * 1
+            return{
+              ...orderProd, 
+              postingNumber: order.id,
+              quantity 
+            }
+          })
+         
+        }
+    }) 
+     res.length ? setNotReadyProducts(res) : setNotReadyProducts(resWb)
+
+    }, [props, ordersWB])
+
+    console.log(notReadyProducts)
 
     function puckedProducts (){
-      notReadyProducts.forEach(product => {
-        console.log(product)
+      notReadyProducts.forEach(product => { 
         updateProductQuantity({ comment: `${product.postingNumber}`, productsToUpdate: [product] })
-          .then(res => {
-            console.log(res)
+          .then(res => { 
             setRequestPucked(prevRequest =>  [...prevRequest, res[0]])})
           .catch(er => console.log(er)) 
       }) 
-    }
-    console.log(requestPucked)
+    } 
 
     const compare = (a, b) => {
         if (a.productArt < b.productArt) {
@@ -184,8 +201,7 @@ const ListOrder = ({props, onLoadingProducts, date, setDate, headersOzon, orders
         if (!sticker.ok) {
           throw new Error('Failed to download file');
         }
-        console.log(prop.postingNumber);
-        console.log(sticker);
+     
         const contentType = sticker.headers.get('Content-Type');
         const blob = await sticker.blob();
         const url = window.URL.createObjectURL(blob);
@@ -306,8 +322,7 @@ const productTotal = props ? colculateTotalProducts(props) : null;
 
   function deleteItemWB (id, stickerId){
     setOrdersWB(ordersWB.filter(item => item.id !== id))
-    setStickersWB(stickersWB.filter((sticker) => sticker.id !== stickerId))
-    console.log(stickerId)
+    setStickersWB(stickersWB.filter((sticker) => sticker.id !== stickerId)) 
   } 
 
 
@@ -329,9 +344,8 @@ const productTotal = props ? colculateTotalProducts(props) : null;
                 <h1>{localStorage.nameCompany}</h1>
                 {ordersWB.length ? <PageWB ordersWB={ordersWB} deleteItemWB={deleteItemWB}/> : <PageOZN elem={elem} productTotal={productTotal} dateOrders={dateOrders}/> }
             </div>
-            <div className='buttons'>
-              <button onClick={saveAsPDF}>Сохранить как PDF</button>
-              <button onClick={puckedProducts}>Упаковать товары</button>
+            <div className='buttons'>  
+              <Button onClick={puckedProducts} variant="outline-success">Упаковать товары</Button> 
             </div>
 
             {requestPucked.map(item => {
@@ -391,8 +405,7 @@ const PageOZN = ({elem, productTotal, dateOrders}) => {
     )
 }
 
-const PageWB = ({ordersWB, deleteItemWB}) => { 
-  console.log(ordersWB)
+const PageWB = ({ordersWB, deleteItemWB}) => {  
     const Barcode = ({barcodeOrders}) => {
         const options = {
             value: `${barcodeOrders}`,

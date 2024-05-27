@@ -45,8 +45,9 @@ const useOrderService = () => {
         return res.orders
     }
     const getStickersWB = async (apiKey, body) => {  
+        console.log(body)
         const res = await request(`https://f9fd09879062.vps.myjino.ru:49256/wb-stickers`, 'POST', body);
-           console.log(res)
+        console.log(res) 
         return res.stickers
     }
 

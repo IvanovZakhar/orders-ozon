@@ -81,7 +81,7 @@ const NavLink = ( {onLoadingProducts, getLabels, labels, setName, onGetStickersY
                        
                          if(localStorage.nameCompany === 'Яндекс'){
                           onGetStickersYandex()
-                         }else if(localStorage.nameCompany === 'Арсенал' || localStorage.nameCompany === 'ЦМА'){
+                         }else if(localStorage.nameCompany === 'Арсенал' || localStorage.nameCompany === 'ЦМА' || localStorage.nameCompany === 'Metal Design'){
                           getLabels()
                          }
                          }}> Получить наклейки</Button>

@@ -451,7 +451,7 @@ const PageWB = ({ordersWB, deleteItemWB}) => {
                                   <td className='productName list-order__item'>{order.name}</td>
                                   <td className='list-order__item'>{order.article}</td> 
                                   <td className='list-order__item'>1</td>
-                                  <td className='warehouse list-order__item'>{order.warehouseId === 837292 ? "Уткина заводь" : "Шушары"}</td>
+                                  <td className='warehouse list-order__item'>{order.warehouseId === 837292 || 1046560 ? "Уткина заводь" : "Шушары"}</td>
                                   <div className='cross' onClick={() => {deleteItemWB(order.id, order.stickerId)}}>x</div>
                               </tr>
                           

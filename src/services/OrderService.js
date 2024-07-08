@@ -37,7 +37,6 @@ const useOrderService = () => {
     }
  
     const getAllOrdersWB = async (dateFrom, dateTo, apiKey) => { 
-      
         const unixDateFrom = getNewDate(dateFrom)
         const unixDateTo = getNewDate(dateTo)
         const res = await request(`https://f9fd09879062.vps.myjino.ru:49256/wb-orders/${unixDateFrom}/${unixDateTo}`, 'GET', null );
@@ -46,6 +45,18 @@ const useOrderService = () => {
     }
     const getStickersWB = async (apiKey, body) => {   
         const res = await request(`https://f9fd09879062.vps.myjino.ru:49256/wb-stickers`, 'POST', body); 
+        return res.stickers
+    }
+
+    const getAllOrdersWBCMA = async (dateFrom, dateTo, apiKey) => { 
+        const unixDateFrom = getNewDate(dateFrom)
+        const unixDateTo = getNewDate(dateTo)
+        const res = await request(`https://f9fd09879062.vps.myjino.ru:49256/wbcma-orders/${unixDateFrom}/${unixDateTo}`, 'GET', null );
+         console.log(res)
+        return res.orders
+    }
+    const getStickersWBCMA = async (apiKey, body) => {   
+        const res = await request(`https://f9fd09879062.vps.myjino.ru:49256/wbcma-stickers`, 'POST', body); 
         return res.stickers
     }
 
@@ -139,7 +150,9 @@ const useOrderService = () => {
             getAllOrdersYandex,
             getStickersOrdersYandex,
             getProductsForOrdersBarcode,
-            updateProductQuantity}
+            updateProductQuantity, 
+            getStickersWBCMA,
+            getAllOrdersWBCMA}
 }
 
 export default useOrderService;

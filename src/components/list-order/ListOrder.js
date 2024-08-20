@@ -12,7 +12,7 @@ import Alert from 'react-bootstrap/Alert';
 import Button from 'react-bootstrap/Button';
 
 const ListOrder = ({props, onLoadingProducts, date, setDate, headersOzon, ordersWB,  setOrdersWB,stickersWB,  setStickersWB, productsForOrdersBarcode}) => {
- 
+  console.log(ordersWB)
     const {getLabelOzon, getStickersOrdersYandex, updateProductQuantity} = useOrderService()
     const [labels, setLabels] = useState();
     const [name, setName] = useState('')
@@ -57,9 +57,7 @@ const ListOrder = ({props, onLoadingProducts, date, setDate, headersOzon, orders
      res.length ? setNotReadyProducts(res) : setNotReadyProducts(resWb)
 
     }, [props, ordersWB])
-
-    console.log(notReadyProducts)
-
+ 
     function puckedProducts (){
       notReadyProducts.forEach(product => { 
         updateProductQuantity({ comment: `${product.postingNumber}`, productsToUpdate: [product] })
@@ -83,6 +81,8 @@ const ListOrder = ({props, onLoadingProducts, date, setDate, headersOzon, orders
 
 
     const readySort = props ? props.sort(compare) : null
+
+ 
   
     const elem = readySort ? readySort.map((item, i) => {
         const {date,

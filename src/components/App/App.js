@@ -40,7 +40,7 @@ function App() {
     dir: 'ASC',
     filter: {
       cutoff_from: `${localStorage.data}T00:00:00.000Z`,
-      cutoff_to: `${localStorage.data}T17:00:00Z`,
+      cutoff_to: `${localStorage.data}T23:59:00Z`,
       delivery_method_id: [],
       provider_id: [],
       status: 'awaiting_deliver',

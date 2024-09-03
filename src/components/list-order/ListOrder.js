@@ -11,8 +11,7 @@ import { saveAs } from 'file-saver';
 import Alert from 'react-bootstrap/Alert';
 import Button from 'react-bootstrap/Button';
 
-const ListOrder = ({props, onLoadingProducts, date, setDate, headersOzon, ordersWB,  setOrdersWB,stickersWB,  setStickersWB, productsForOrdersBarcode}) => {
-  console.log(ordersWB)
+const ListOrder = ({props, onLoadingProducts, date, setDate, headersOzon, ordersWB,  setOrdersWB,stickersWB,  setStickersWB, productsForOrdersBarcode}) => { 
     const {getLabelOzon, getStickersOrdersYandex, updateProductQuantity} = useOrderService()
     const [labels, setLabels] = useState();
     const [name, setName] = useState('')
@@ -406,6 +405,7 @@ const PageOZN = ({elem, productTotal, dateOrders}) => {
 }
 
 const PageWB = ({ordersWB, deleteItemWB}) => {  
+  console.log(ordersWB)
     const Barcode = ({barcodeOrders}) => {
         const options = {
             value: `${barcodeOrders}`,
@@ -442,6 +442,7 @@ const PageWB = ({ordersWB, deleteItemWB}) => {
                     </thead>
                     <tbody>
                         {ordersWB.map((order, i) => { 
+                          console.log(order)
                             return(
                             <>
                               <tr className='list-order__item' key={i} style={{backgroundColor: `${order.packed ? 'green' : null}`}}>
@@ -451,7 +452,7 @@ const PageWB = ({ordersWB, deleteItemWB}) => {
                                   <td className='productName list-order__item'>{order.name}</td>
                                   <td className='list-order__item'>{order.article}</td> 
                                   <td className='list-order__item'>1</td>
-                                  <td className='warehouse list-order__item'>{order.warehouseId === 837292 || 1046560 ? "Уткина заводь" : "Шушары"}</td>
+                                  <td className='warehouse list-order__item'>{order.warehouseId === 1088352 || order.warehouseId === 1046560 ? "Уткина заводь" : "Шушары"}</td>
                                   <div className='cross' onClick={() => {deleteItemWB(order.id, order.stickerId)}}>x</div>
                               </tr>
                           

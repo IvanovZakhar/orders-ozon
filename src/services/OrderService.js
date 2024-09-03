@@ -59,6 +59,18 @@ const useOrderService = () => {
         const res = await request(`https://f9fd09879062.vps.myjino.ru:49256/wbcma-stickers`, 'POST', body); 
         return res.stickers
     }
+    
+    const getAllOrdersWBMD = async (dateFrom, dateTo, apiKey) => { 
+        const unixDateFrom = getNewDate(dateFrom)
+        const unixDateTo = getNewDate(dateTo)
+        const res = await request(`https://f9fd09879062.vps.myjino.ru:49256/wbmd-orders/${unixDateFrom}/${unixDateTo}`, 'GET', null );
+         console.log(res)
+        return res.orders
+    }
+    const getStickersWBMD = async (apiKey, body) => {   
+        const res = await request(`https://f9fd09879062.vps.myjino.ru:49256/wbmd-stickers`, 'POST', body); 
+        return res.stickers
+    }
 
     // Для создания Unix timestamp 
 
@@ -152,7 +164,9 @@ const useOrderService = () => {
             getProductsForOrdersBarcode,
             updateProductQuantity, 
             getStickersWBCMA,
-            getAllOrdersWBCMA}
+            getAllOrdersWBCMA,
+            getStickersWBMD,
+            getAllOrdersWBMD}
 }
 
 export default useOrderService;

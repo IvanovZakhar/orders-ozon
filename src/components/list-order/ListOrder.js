@@ -197,6 +197,7 @@ const ListOrder = ({props, onLoadingProducts, date, setDate, headersOzon, orders
     for (const prop of objectsArray) {
       try {
         const sticker = await getStickersOrdersYandex(prop.postingNumber);
+        console.log(sticker)
         if (!sticker.ok) {
           throw new Error('Failed to download file');
         }
@@ -231,7 +232,8 @@ async function mergePDFs(pdfUrls) {
 
   return mergedPdf;
 }
-     
+ 
+
 const onDownlloadStickersYandex = () => { 
   mergePDFs(stickersYandex).then(mergedPdf => {
     mergedPdf.saveAsBase64({ dataUri: true }).then(function(base64DataUri) {

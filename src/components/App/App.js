@@ -34,7 +34,9 @@ function App() {
           getStickersWBCMA,
           getStickersWBMD,
           getAllOrdersWBCMA, 
-          getAllOrdersWBMD } = useOrderService();
+          getAllOrdersWBMD,
+          getAllOrdersWBArsenal,
+          getStickersWBArsenal } = useOrderService();
 
  
 
@@ -229,6 +231,88 @@ useEffect(()=> {
               const arrId = resOrders.map(item => item.id) 
 
               getStickersWBCMA(localStorage.apiKey, JSON.stringify({'orders':arrId})).then(stickers => { 
+ 
+                stickers.forEach(sticker => {
+                    // Ваша строка в кодировке base64
+                    const base64String =  sticker.file
+                    // Создаем бинарные данные из строки base64
+                    const binaryString = atob(base64String);
+                    const binaryLength = binaryString.length;
+                    const bytes = new Uint8Array(binaryLength);
+                    for (var i = 0; i < binaryLength; i++) {
+                        bytes[i] = binaryString.charCodeAt(i);
+                    }
+            
+                    // Создаем Blob из бинарных данных
+                    const blob = new Blob([bytes], { type: 'image/png' });
+            
+                    // Создаем ссылку для загрузки изображения
+                    const url = URL.createObjectURL(blob);
+                     
+                    setStickersWB(prevSticker => [...prevSticker, {url, id: sticker.partB}])
+                })
+            
+            
+                const readyOrders = resOrders.map(order => {
+                  const result = stickers.filter(sticker => sticker.orderId === order.id);
+              
+                  if(result.length){
+                      const obj = {
+                          'id': result[0].orderId,
+                          'name': order.name,
+                          'article': order.article,
+                          'stickerId': result[0].partB ,
+                          'warehouseId': order.warehouseId,
+                          'packed': order.packed
+                      };
+                      return obj;
+                  } else {
+                      // Если result пустой, не возвращаем ничего
+                      return null;
+                  }
+              }).filter(order => order !== null); // Фильтруем, чтобы удалить все пустые элементы
+              
+                  setOrdersWB(readyOrders)
+              })
+            })  
+          })
+        }
+        else if(localStorage.nameCompany === 'WBARSENAL'){
+ 
+          getAllOrdersWBArsenal(dateFrom, dateTo, localStorage.apiKey).then(ordersWB => { 
+ 
+            const res = ordersWB.map(item =>{  
+              const filtRes = logs.find(log => log.comment == item.id) 
+              
+              if(filtRes){
+                return{
+                  ...item, packed: true
+                }
+              }else{
+                return item
+              }
+            }) 
+  
+            getInfoProducts().then(allProducts => {
+              // Перебираем заказы и сравниваем и фильтруя их по артикулам выводим их названия
+              const resOrders = res.map(order => { 
+                const resProd = allProducts.filter(product => product.article === order.article);
+                if (resProd.length) {
+                  // Создаем новый объект с обновленными данными
+                  const updatedProduct = {
+                    ...resProd[0], // Копируем свойства из существующего продукта
+                    id: order.id,
+                    warehouseId: order.warehouseId,
+                    packed: order.packed
+                  }; 
+                  return updatedProduct;
+                }
+              });
+               
+              // Получаем id каждого заказа
+              const arrId = resOrders.map(item => item.id) 
+
+              getStickersWBArsenal(localStorage.apiKey, JSON.stringify({'orders':arrId})).then(stickers => { 
  
                 stickers.forEach(sticker => {
                     // Ваша строка в кодировке base64

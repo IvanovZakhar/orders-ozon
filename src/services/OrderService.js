@@ -30,9 +30,8 @@ const useOrderService = () => {
     }
 
     const getStickersOrdersYandex = async (orderId) => { 
- 
-        const res = await request(`https://f9fd09879062.vps.myjino.ru:49256/yandex-stickers/${orderId}`, 'GET', null, {'Content-Type': 'application/pdf'}, false);
-        
+        console.log(orderId)
+        const res = await request(`https://f9fd09879062.vps.myjino.ru:49256/yandex-stickers/${orderId}`, 'GET', null, {'Content-Type': 'application/pdf'}, false); 
         return res
     }
  
@@ -60,6 +59,14 @@ const useOrderService = () => {
         return res.stickers
     }
     
+    const getAllOrdersWBArsenal = async (dateFrom, dateTo, apiKey) => { 
+        const unixDateFrom = getNewDate(dateFrom)
+        const unixDateTo = getNewDate(dateTo)
+        const res = await request(`https://f9fd09879062.vps.myjino.ru:49256/wbarsenal-orders/${unixDateFrom}/${unixDateTo}`, 'GET', null );
+         console.log(res)
+        return res.orders
+    } 
+
     const getAllOrdersWBMD = async (dateFrom, dateTo, apiKey) => { 
         const unixDateFrom = getNewDate(dateFrom)
         const unixDateTo = getNewDate(dateTo)
@@ -69,6 +76,13 @@ const useOrderService = () => {
     }
     const getStickersWBMD = async (apiKey, body) => {   
         const res = await request(`https://f9fd09879062.vps.myjino.ru:49256/wbmd-stickers`, 'POST', body); 
+        console.log(res.stickers)
+        return res.stickers
+    }
+
+    const getStickersWBArsenal = async (apiKey, body) => {   
+        const res = await request(`https://f9fd09879062.vps.myjino.ru:49256/wbarsenal-stickers`, 'POST', body); 
+        console.log(res.stickers)
         return res.stickers
     }
 
@@ -166,7 +180,9 @@ const useOrderService = () => {
             getStickersWBCMA,
             getAllOrdersWBCMA,
             getStickersWBMD,
-            getAllOrdersWBMD}
+            getStickersWBArsenal,
+            getAllOrdersWBMD,
+            getAllOrdersWBArsenal}
 }
 
 export default useOrderService;

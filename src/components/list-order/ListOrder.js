@@ -55,7 +55,7 @@ const ListOrder = ({props, onLoadingProducts, date, setDate, headersOzon, orders
     }) 
      res.length ? setNotReadyProducts(res) : setNotReadyProducts(resWb)
 
-    }, [props, ordersWB])
+    }, [props, ordersWB ])
  
     function puckedProducts (){
       notReadyProducts.forEach(product => { 
@@ -443,26 +443,24 @@ const PageWB = ({ordersWB, deleteItemWB}) => {
                         </tr>
                     </thead>
                     <tbody>
-                        {ordersWB.map((order, i) => { 
-                          console.log(order)
-                            return(
-                            <>
-                              <tr className='list-order__item' key={i} style={{backgroundColor: `${order.packed ? 'green' : null}`}}>
-                                  <td className='list-order__item'>{i+=1}</td>
-                                  <td className='list-order__item posting-number'>{<Barcode barcodeOrders={`WB${order.id}`}/>}</td>
-                                  <td className='list-order__item'> {order.stickerId}</td>
-                                  <td className='productName list-order__item'>{order.name}</td>
-                                  <td className='list-order__item'>{order.article}</td> 
-                                  <td className='list-order__item'>1</td>
-                                  <td className='warehouse list-order__item'>{order.warehouseId === 1088352 || order.warehouseId === 1046560 ? "Уткина заводь" : "Шушары"}</td>
-                                  <div className='cross' onClick={() => {deleteItemWB(order.id, order.stickerId)}}>x</div>
-                              </tr>
-                          
-                            </>
-                            )
-                        })}
-                        
+                      {ordersWB.map((order, i) => (
+                        <tr className='list-order__item' key={order.id} style={{backgroundColor: order.packed ? 'green' : 'transparent'}}>
+                          <td className='list-order__item'>{i+1}</td>
+                          <td className='list-order__item posting-number'>
+                            <Barcode barcodeOrders={`WB${order.id}`} />
+                          </td>
+                          <td className='list-order__item'>{order.stickerId}</td>
+                          <td className='productName list-order__item'>{order.name}</td>
+                          <td className='list-order__item'>{order.article}</td>
+                          <td className='list-order__item'>1</td>
+                          <td className='warehouse list-order__item'>
+                            {order.warehouseId === 1088352 || order.warehouseId === 1046560 ? "Уткина заводь" : "Шушары"}
+                          </td>
+                          <div className='cross' onClick={() => deleteItemWB(order.id, order.stickerId)}>x</div>
+                        </tr>
+                      ))}
                     </tbody>
+
                 
                 </table>
             

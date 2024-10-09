@@ -29,9 +29,9 @@ const useOrderService = () => {
         return res.orders
     }
 
-    const getStickersOrdersYandex = async (orderId) => { 
+    const getStickersOrdersYandex = async (orderId, campaignId) => { 
         console.log(orderId)
-        const res = await request(`https://f9fd09879062.vps.myjino.ru:49256/yandex-stickers/${orderId}`, 'GET', null, {'Content-Type': 'application/pdf'}, false); 
+        const res = await request(`https://f9fd09879062.vps.myjino.ru:49256/yandex-stickers/${campaignId}/${orderId}`, 'GET', null, {'Content-Type': 'application/pdf'}, false); 
         return res
     }
  

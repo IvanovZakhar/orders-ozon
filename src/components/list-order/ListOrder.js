@@ -12,7 +12,8 @@ import Alert from 'react-bootstrap/Alert';
 import Button from 'react-bootstrap/Button';
 
 const ListOrder = ({props, onLoadingProducts, date, setDate, headersOzon, ordersWB,  setOrdersWB,stickersWB,  setStickersWB, productsForOrdersBarcode}) => { 
-    const {getLabelOzon, getStickersOrdersYandex, updateProductQuantity} = useOrderService()
+  console.log(props)
+    const {getLabelOzon, getStickersOrdersYandex, updateProductQuantity, loading} = useOrderService()
     const [labels, setLabels] = useState();
     const [name, setName] = useState('')
     const [stickersYandex, setStickersYandex] = useState([])
@@ -193,10 +194,12 @@ const ListOrder = ({props, onLoadingProducts, date, setDate, headersOzon, orders
 
     async function onGetStickersYandex(objectsArray = sortedElemsSticker) { 
       const stickerURLs = []; // массив для собирания урлов стикеров в правильном порядке
+      const campaignId = localStorage.clientId
+       
   
     for (const prop of objectsArray) {
       try {
-        const sticker = await getStickersOrdersYandex(prop.postingNumber);
+        const sticker = await getStickersOrdersYandex(prop.postingNumber, campaignId);
         console.log(sticker)
         if (!sticker.ok) {
           throw new Error('Failed to download file');
@@ -328,6 +331,27 @@ const productTotal = props ? colculateTotalProducts(props) : null;
 
 
 
+
+  function renderContent() {
+    console.log(loading)
+    console.log(ordersWB)
+    if (loading) {
+      return <div className="loading-message">Загрузка данных, пожалуйста, подождите...</div>; // Сообщение о загрузке
+    }
+  
+    if (!loading && !props.length && !ordersWB.length) {
+      return <div className="no-orders-message">Заказы не найдены</div>; // Сообщение, если заказы не найдены
+    }
+  
+    if (!loading && (props.length || ordersWB.length)) {
+      return ordersWB.length 
+        ? <PageWB ordersWB={ordersWB} deleteItemWB={deleteItemWB} /> 
+        : <PageOZN elem={elem} productTotal={productTotal} dateOrders={dateOrders} />;
+    }
+  
+    return null;
+  }
+  
     return(
         <>
              <NavLink onLoadingProducts={onLoadingProducts} 
@@ -341,9 +365,9 @@ const productTotal = props ? colculateTotalProducts(props) : null;
                       stickersYandex={stickersYandex}
                       stickersWB={stickersWB}
                       onDownlloadStickersWB={onDownlloadStickersWB}/>
-            <div id='canvas'>
+              <div id="canvas">
                 <h1>{localStorage.nameCompany}</h1>
-                {ordersWB.length ? <PageWB ordersWB={ordersWB} deleteItemWB={deleteItemWB}/> : <PageOZN elem={elem} productTotal={productTotal} dateOrders={dateOrders}/> }
+                {renderContent()}
             </div>
             <div className='buttons'>  
               <Button onClick={puckedProducts} variant="outline-success">Упаковать товары</Button> 
@@ -427,6 +451,8 @@ const PageWB = ({ordersWB, deleteItemWB}) => {
             textAlign: 'center'
           }}/>;
       };
+
+
     return(
         <>
                

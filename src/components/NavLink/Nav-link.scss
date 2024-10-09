@@ -3,12 +3,22 @@
 $theme-colors: (
     "info": tomato,
     "danger": teal );
+
 .button-nav{
     position: fixed;
     left: 10px;
     top: 1px;
     border-radius: 50%;
     border: 0;
+    font-size: 40px;
+    width: 60px;
+    height: 60px;
+    background-color:#0d6efd;
+    border: 3px solid black;
+}
+
+.button-nav:hover{
+    background-color:green;
 }
 
 .form-control{

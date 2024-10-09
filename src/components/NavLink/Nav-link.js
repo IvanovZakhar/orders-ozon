@@ -79,7 +79,7 @@ const NavLink = ( {onLoadingProducts, getLabels, labels, setName, onGetStickersY
                   <div className='labels'>
                       <Button className='labels-btn' onClick={() =>{
                        
-                         if(localStorage.nameCompany === 'Яндекс'){
+                         if(localStorage.nameCompany === 'Яндекс' || localStorage.nameCompany === 'Яндекс КГТ'){
                           onGetStickersYandex()
                          }else if(localStorage.nameCompany === 'Арсенал' || localStorage.nameCompany === 'ЦМА' || localStorage.nameCompany === 'MD'){
                           getLabels()

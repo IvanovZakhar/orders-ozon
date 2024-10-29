@@ -1,0 +1,177 @@
+th, td{
+    border: 1px solid black;
+    padding: 0;
+    text-align: center;
+}
+
+
+tbody{
+    div{
+        display: flex;
+        margin-top: 100px;
+        justify-content: space-around;
+        
+ 
+    }
+}
+
+.order{
+    width: 1075px;
+    height: 1535px;
+    display: block;
+    border: 1px solid black;
+}
+ 
+.main__head{
+    display: flex;
+    justify-content: space-between;
+}
+
+.about-head{
+    display: flex;
+    flex-direction: column;
+    width: 260px;
+    margin-top: 2px;
+    th{
+        font-size: 24px;
+    }
+    .about-head__time{
+        height: 53px;
+        text-align: center;
+        
+    }
+  
+}
+
+.info{
+    th{
+        width: 200px;
+        height: 30px;
+       
+    }
+}
+.data-order{
+    display: flex;
+    justify-content: space-between;
+    tr{
+        th{
+           
+            width: 200px;
+        }
+
+        .data{
+            font-size: 24px;
+            width: 320px;
+            font-weight: bold;
+            text-align: center;
+        }
+    }
+}
+
+ 
+.collector{ 
+    th:first-child{
+        width: 200px;
+        height: 32px;
+    }
+}
+
+.name{
+    width: 300px;
+ 
+    font-size: 30px;
+}
+
+h2{
+    font-size: 48px;
+    height: 92px;
+    font-weight: bold;
+    text-align: center;
+}
+
+ 
+
+.head-body{
+    display: flex;
+    flex-direction: column;
+    tr{
+        width: 1084px;
+    }
+    .order-name{
+        width: 1075px;
+        justify-content: space-between;
+        h1{
+            width: 1072px;
+            font-weight: bold;
+            text-align: center;
+        }
+        .address{
+            font-size: 22px;
+            width: 900px;
+        }
+        span{
+            border: 4px solid black;
+            font-size: 38px;
+            padding: 0 5px;
+            margin-left: 15px;
+        }
+    }
+
+}
+
+.about-product{
+    display: flex;
+    justify-content: space-around;
+    .params, .complete{
+        display: flex;
+        flex-direction: column;
+        width: 300px;
+        h3{
+            width: 300px;
+        }
+        th{
+            width: 150px;
+            font-size: 20px;
+        }
+    }
+}
+
+.note{
+    display: flex;
+    flex-direction: column;
+    width: 500px;
+ 
+    tr{
+        width: 500px;
+        display: flex;
+        th{
+            width: 500px;
+            font-size: 24px;
+        }
+    }
+}
+
+.compl{
+  display: flex;
+  flex-direction: column;
+  width: 300px; 
+
+
+    tr{
+        th:first-child{
+            width: 250px;
+          }
+          th:last-child{
+            width: 50px;
+          }
+    }
+    tr:first-child{
+        width: 300px;
+        th{
+            width: 300px;
+        }
+    }
+
+}
+
+ 

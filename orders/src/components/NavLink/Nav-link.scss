@@ -1,0 +1,77 @@
+@import "~bootstrap/scss/bootstrap";
+
+$theme-colors: (
+    "info": tomato,
+    "danger": teal );
+
+.button-nav{
+    position: fixed;
+    left: 10px;
+    top: 1px;
+    border-radius: 50%;
+    border: 0;
+    font-size: 40px;
+    width: 60px;
+    height: 60px;
+    background-color:#0d6efd;
+    border: 3px solid black;
+}
+
+.button-nav:hover{
+    background-color:green;
+}
+
+.form-control{
+    width: 200px;
+}
+
+form{
+    width: 200px;
+}
+
+.forms{
+    display: flex;
+    justify-content: space-around;
+}
+
+.labels{
+    display: flex;
+    flex-direction: column;
+    .labels-btn{
+        margin-top: 70px;
+        height: 50px;
+    }
+    
+    span{
+        cursor: pointer;
+        margin: 0 auto;
+        margin-top: 10px;
+        color: rgb(150, 51, 189);
+        
+        
+    }
+}
+
+.offcanvas-body{
+    flex-grow: 1;
+    padding: var(--bs-offcanvas-padding-y) var(--bs-offcanvas-padding-x); 
+    min-height: 400px;
+    background-color: white;
+}
+
+.toast{
+    margin-top: 20px;
+}
+
+.me-auto{
+    cursor: pointer;
+}
+
+.active{
+    box-shadow: 0 0.5rem 1rem rgba(47, 0, 255, 0.45);
+    color:rgba(47, 0, 255);
+}
+
+.active-text{
+    color:rgba(47, 0, 255);
+}

@@ -11,7 +11,7 @@ import { saveAs } from 'file-saver';
 import Alert from 'react-bootstrap/Alert';
 import Button from 'react-bootstrap/Button';
 
-const ListOrder = ({props, onLoadingProducts, date, setDate, headersOzon, ordersWB,  setOrdersWB,stickersWB,  setStickersWB, productsForOrdersBarcode}) => { 
+const ListOrder = ({props, setAllOrders, onLoadingProducts, date, setDate, headersOzon, ordersWB,  setOrdersWB,stickersWB,  setStickersWB, productsForOrdersBarcode}) => { 
   console.log(props)
     const {getLabelOzon, getStickersOrdersYandex, updateProductQuantity, loading} = useOrderService()
     const [labels, setLabels] = useState();
@@ -105,6 +105,7 @@ const ListOrder = ({props, onLoadingProducts, date, setDate, headersOzon, orders
                     <td className='list-order__item'>{productPrice.length > 7 ? productPrice.slice(0, -5) : productPrice}</td>
                     <td className='list-order__item'>{quantity}</td>
                     <td className='warehouse list-order__item'>{warehouse.slice(0, 8)}</td>
+                    <td className='cross_item'   onClick={() => deleteItemOzon(item.postingNumber)} >x</td>
                 </tr>
                
             )
@@ -329,6 +330,12 @@ const productTotal = props ? colculateTotalProducts(props) : null;
     setStickersWB(stickersWB.filter((sticker) => sticker.id !== stickerId)) 
   } 
 
+  function deleteItemOzon (postingNumber){
+    setAllOrders(prevOrders => {
+      return prevOrders.filter(item => item.postingNumber != postingNumber)
+    })
+  }
+
 
 
 
@@ -395,13 +402,15 @@ const PageOZN = ({elem, productTotal, dateOrders}) => {
                             <th className='list-order__item'>№</th>
                             <th className='list-order__item'>Номер отправления</th>
                             <th className='list-order__item'>Дата отгрузки</th>
-                            <th className='list-order__item date'>{dateOrders.length > 10 ? 
+                            {/* <th className='list-order__item date'>{dateOrders.length > 10 ? 
                                                         `${dateOrders.slice(8, 10)}.${dateOrders.slice(5, 7)}.${dateOrders.slice(0, 4)}` : 
-                                                        `${dateOrders.slice(0, 2)}.${dateOrders.slice(3, 5)}.${dateOrders.slice(6, 10)}`}</th>
+                                                        `${dateOrders.slice(0, 2)}.${dateOrders.slice(3, 5)}.${dateOrders.slice(6, 10)}`}</th> */}
+                            <th className='list-order__item date'><input type='date'/></th>
                             <th className='art list-order__item'>Артикул</th>
                             <th className='list-order__item'>Стоимость</th>
                             <th className='list-order__item'>Кол-во шт.</th>
                             <th className='list-order__item'>Склад</th>
+                            <th className='list-order__item'>Дейст.</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -466,6 +475,7 @@ const PageWB = ({ordersWB, deleteItemWB}) => {
                             <th className='art list-order__item'>Артикул</th> 
                             <th className='list-order__item'>Кол-во шт.</th>
                             <th className='list-order__item'>Склад</th>
+                            <th className='list-order__item'>Дейст.</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -482,7 +492,7 @@ const PageWB = ({ordersWB, deleteItemWB}) => {
                           <td className='warehouse list-order__item'>
                             {order.warehouseId === 1088352 || order.warehouseId === 1129665 ? "Уткина заводь" : "Шушары"}
                           </td>
-                          <div className='cross' onClick={() => deleteItemWB(order.id, order.stickerId)}>x</div>
+                          <td className='cross_item' onClick={() => deleteItemWB(order.id, order.stickerId)}>x</td>
                         </tr>
                       ))}
                     </tbody>

@@ -454,6 +454,7 @@ useEffect(()=> {
                 }
     
               })
+         
               setAllOrders(res)
          
       })
@@ -479,6 +480,7 @@ useEffect(()=> {
         
         <Route path="/" element={<ListOrder 
                                             props={allOrders} 
+                                            setAllOrders={setAllOrders}
                                             ordersWB={ordersWB}  
                                             setOrdersWB={setOrdersWB} 
                                             date={date} setDate={setDate} 

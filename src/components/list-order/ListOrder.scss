@@ -83,6 +83,20 @@ h2{
     border-bottom: 3px solid black;  
  }
 
+ .cross_item{
+    cursor: pointer;
+    font-size: 30px;
+    text-align: center;
+    padding: 5px;
+    margin: 0 ;
+ }
+
+ .cross_item:hover{
+    color: grey;
+    font-size: 33px;
+ }
+ 
+
 .buttons{
     width: 400px;
     margin-left: 20px;

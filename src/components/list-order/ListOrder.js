@@ -139,8 +139,7 @@ const ListOrder = ({allProducts, props, setAllOrders, onLoadingProducts, date, s
             )
     }) : null;
 
-    function setInfoOrder(article, postingNumber){
-      setDataOrder({article,postingNumber})
+    function setInfoOrder(article){
       handleShow() 
       const product = allProducts.find(product => product.article === article)
       getPhotoProducts(article).then(productPhoto => {
@@ -392,7 +391,7 @@ const productTotal = props ? colculateTotalProducts(props) : null;
   
     if (!loading && (props.length || ordersWB.length)) {
       return ordersWB.length 
-        ? <PageWB ordersWB={ordersWB} deleteItemWB={deleteItemWB} /> 
+        ? <PageWB ordersWB={ordersWB} deleteItemWB={deleteItemWB} setInfoOrder={setInfoOrder}/> 
         : <PageOZN elem={elem} productTotal={productTotal} dateOrders={dateOrders} />;
     }
   
@@ -480,7 +479,7 @@ const PageOZN = ({elem, productTotal, dateOrders}) => {
     )
 }
 
-const PageWB = ({ordersWB, deleteItemWB}) => {  
+const PageWB = ({ordersWB, deleteItemWB, setInfoOrder}) => {  
   console.log(ordersWB)
     const Barcode = ({barcodeOrders}) => {
         const options = {
@@ -521,7 +520,9 @@ const PageWB = ({ordersWB, deleteItemWB}) => {
                     </thead>
                     <tbody>
                       {ordersWB.map((order, i) => (
-                        <tr className='list-order__item' key={order.id} style={{backgroundColor: order.packed ? 'green' : 'transparent'}}>
+                        <tr className={`${order.packed ? 'list-order__item packed' : 'list-order__item'}`}
+                        onClick={() => {setInfoOrder(order.article)}}
+                        key={order.id}   >
                           <td className='list-order__item'>{i+1}</td>
                           <td className='list-order__item posting-number'>
                             <Barcode barcodeOrders={`WB${order.id}`} />
@@ -533,7 +534,9 @@ const PageWB = ({ordersWB, deleteItemWB}) => {
                           <td className='warehouse list-order__item'>
                             {order.warehouseId === 1088352 || order.warehouseId === 1129665 ? "Уткина заводь" : "Шушары"}
                           </td>
-                          <td className='cross_item' onClick={() => deleteItemWB(order.id, order.stickerId)}>x</td>
+                          <td className='cross_item' onClick={(event) => { 
+                            event.stopPropagation(); // предотвращаем всплытие события
+                            deleteItemWB(order.id, order.stickerId)}}>x</td> 
                         </tr>
                       ))}
                     </tbody>

@@ -17,6 +17,8 @@ const useOrderService = () => {
         return res;
     }
 
+    
+
     const getLabelOzon = async (url, method, body, headersOzon) => {
         const res = await request(url, method, body, headersOzon);
         return res
@@ -124,7 +126,11 @@ const useOrderService = () => {
         const res = await request(`${_url}/products-for-orders`, 'GET')
         return res
     }
- 
+    
+    const getPhotoProducts = async (article) => {
+        const res = await request(`${_url}/allproducts?article=${article}`, 'GET');
+      return res 
+    }
 
     const transformBaskets = (baskets) => {
          
@@ -182,7 +188,8 @@ const useOrderService = () => {
             getStickersWBMD,
             getStickersWBArsenal,
             getAllOrdersWBMD,
-            getAllOrdersWBArsenal}
+            getAllOrdersWBArsenal, 
+            getPhotoProducts}
 }
 
 export default useOrderService;

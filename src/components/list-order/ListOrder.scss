@@ -103,3 +103,17 @@ h2{
     display: flex;
     justify-content: space-between;
 }
+
+tr:hover{
+    cursor: pointer;
+    height: 50px;
+    background-color: #0b5ed7;
+}
+
+// Стили для строки с фоном при "packed" и эффектом наведения
+.packed {
+    background-color: green;
+  
+    
+  }
+  

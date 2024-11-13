@@ -9,16 +9,26 @@ import { useBarcode } from 'next-barcode';
 import {  PDFDocument, PDFName } from 'pdf-lib';
 import { saveAs } from 'file-saver';
 import Alert from 'react-bootstrap/Alert';
-import Button from 'react-bootstrap/Button';
+import Button from 'react-bootstrap/Button'; 
+import Modal from 'react-bootstrap/Modal'; 
+import Image from 'react-bootstrap/Image';
+import Table from 'react-bootstrap/Table';
+import  { useRef } from 'react'; 
+import { useReactToPrint } from 'react-to-print';
 
-const ListOrder = ({props, setAllOrders, onLoadingProducts, date, setDate, headersOzon, ordersWB,  setOrdersWB,stickersWB,  setStickersWB, productsForOrdersBarcode}) => { 
-  console.log(props)
-    const {getLabelOzon, getStickersOrdersYandex, updateProductQuantity, loading} = useOrderService()
+const ListOrder = ({allProducts, props, setAllOrders, onLoadingProducts, date, setDate, headersOzon, ordersWB,  setOrdersWB,stickersWB,  setStickersWB, productsForOrdersBarcode}) => { 
+  console.log(allProducts)
+    const {getLabelOzon, getStickersOrdersYandex, updateProductQuantity, loading, getPhotoProducts} = useOrderService()
     const [labels, setLabels] = useState();
     const [name, setName] = useState('')
     const [stickersYandex, setStickersYandex] = useState([])
     const [notReadyProducts, setNotReadyProducts] = useState([])
     const [requestPucked, setRequestPucked] = useState([])
+    const [show, setShow] = useState(false);
+    const [dataOrder, setDataOrder] =useState([])
+
+    const handleClose = () => setShow(false);
+    const handleShow = () => setShow(true);
 
     useEffect(() => {
       const notReadyProducts = props.filter(prop => !prop.packed)
@@ -91,25 +101,55 @@ const ListOrder = ({props, setAllOrders, onLoadingProducts, date, setDate, heade
             productPrice,
             quantity,
             warehouse, 
-            packed} = item; 
+            packed} = item;  
+            const green = packed ? 'packed' : ''
+           
             return(
-   
-                <tr className='list-order__item' key={item.postingNumber} style={{backgroundColor: `${packed ? 'green' : null}`}}>
-                    <td className='list-order__item'>{i+=1}</td>
-                    <td className='list-order__item posting-number'>{postingNumber}</td>
-                    <td className='list-order__item'>{date.length > 10 ? 
-                                                        `${date.slice(8, 10)}.${date.slice(5, 7)}.${date.slice(0, 4)}` : 
-                                                        `${date.slice(0, 2)}.${date.slice(3, 5)}.${date.slice(6, 10)}`}</td>
-                    <td className='productName list-order__item'>{productName}</td>
-                    <td className='list-order__item'>{productArt}</td>
-                    <td className='list-order__item'>{productPrice.length > 7 ? productPrice.slice(0, -5) : productPrice}</td>
-                    <td className='list-order__item'>{quantity}</td>
-                    <td className='warehouse list-order__item'>{warehouse.slice(0, 8)}</td>
-                    <td className='cross_item'   onClick={() => deleteItemOzon(item.postingNumber)} >x</td>
-                </tr>
-               
+                    <tr 
+                      className={`list-order__item ${green}`} 
+                      key={item.postingNumber} 
+                      onClick={() => {setInfoOrder(productArt, postingNumber)}}
+                    >
+
+                          <td className='list-order__item'>{i+=1}</td>
+                          <td className='list-order__item posting-number'>{postingNumber}</td>
+                          <td className='list-order__item'>
+                            {date.length > 10 ? 
+                              `${date.slice(8, 10)}.${date.slice(5, 7)}.${date.slice(0, 4)}` : 
+                              `${date.slice(0, 2)}.${date.slice(3, 5)}.${date.slice(6, 10)}`
+                            }
+                          </td>
+                          <td className='productName list-order__item'>{productName}</td>
+                          <td className='list-order__item'>{productArt}</td>
+                          <td className='list-order__item'>
+                            {productPrice.length > 7 ? productPrice.slice(0, -5) : productPrice}
+                          </td>
+                          <td className='list-order__item'>{quantity}</td>
+                          <td className='warehouse list-order__item'>{warehouse.slice(0, 8)}</td>
+                          <td 
+                            className='cross_item' 
+                            onClick={(event) => {
+                              event.stopPropagation(); // предотвращаем всплытие события
+                              deleteItemOzon(item.postingNumber);
+                            }}
+                          >
+                            x
+                          </td>
+                    </tr> 
             )
     }) : null;
+
+    function setInfoOrder(article, postingNumber){
+      setDataOrder({article,postingNumber})
+      handleShow() 
+      const product = allProducts.find(product => product.article === article)
+      getPhotoProducts(article).then(productPhoto => {
+        setDataOrder({
+          ...product,
+          photo: productPhoto[0].main_photo_link 
+        })
+      })
+    }
     
     const sortedElemsSticker = removeDuplicatesByProperty(readySort, 'postingNumber')
 
@@ -387,6 +427,7 @@ const productTotal = props ? colculateTotalProducts(props) : null;
               </Alert>
               )
             })}
+            <ModalOrder dataOrder={dataOrder} show={show} handleClose={handleClose}/>
         </>
     )
     }
@@ -505,5 +546,83 @@ const PageWB = ({ordersWB, deleteItemWB}) => {
         </>
     )
 }
+
+const PrintableContent = React.forwardRef((props, ref) => {
+  const { article, postingNumber, name, photo, Column22, Column14, Column15, Column16, Column17, Column18, Column19, Column20 } = props;
+
+  return (
+    <div ref={ref}>
+      <Modal.Header closeButton>
+        <Modal.Title id="example-modal-sizes-title-lg">
+          {`${name}`} <br />
+          {`Цвет: ${Column22}`}
+        </Modal.Title>
+      </Modal.Header>
+      <Modal.Body>
+        <Image src={photo} fluid />
+        <Table striped="columns">
+          <thead>
+            <tr>
+              <th>№</th>
+              <th>Комплектация</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td>1</td><td>{Column14}</td></tr>
+            <tr><td>2</td><td>{Column15}</td></tr>
+            <tr><td>3</td><td>{Column16}</td></tr>
+            <tr><td>4</td><td>{Column17}</td></tr>
+            <tr><td>5</td><td>{Column18}</td></tr>
+            <tr><td>6</td><td>{Column19}</td></tr>
+            <tr><td>7</td><td>{Column20}</td></tr>
+          </tbody>
+        </Table>
+      </Modal.Body>
+    </div>
+  );
+});
+
+const ModalOrder = ({ dataOrder, handleClose, show }) => {
+  const { article, postingNumber, name, photo, Column22, Column14, Column15, Column16, Column17, Column18, Column19, Column20 } = dataOrder;
+  
+  const printRef = useRef();
+
+  const handlePrint = useReactToPrint({
+    content: () => printRef.current,  // Передача ref правильно здесь
+    documentTitle: 'Order Details',
+  });
+
+  return (
+    <Modal size='lg' show={show} onHide={handleClose} aria-labelledby="example-modal-sizes-title-lg">
+      <PrintableContent
+        ref={printRef}  // Передаем ref здесь
+        article={article}
+        postingNumber={postingNumber}
+        name={name}
+        photo={photo}
+        Column22={Column22}
+        Column14={Column14}
+        Column15={Column15}
+        Column16={Column16}
+        Column17={Column17}
+        Column18={Column18}
+        Column19={Column19}
+        Column20={Column20}
+      />
+      <Modal.Footer>
+        <Button variant="secondary" onClick={handleClose}>
+          Закрыть
+        </Button>
+        <Button variant="primary" onClick={handlePrint}>
+          Печать
+        </Button>
+      </Modal.Footer>
+    </Modal>
+  );
+};
+
+
+ 
+
 
 export default ListOrder;

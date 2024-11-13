@@ -63,6 +63,7 @@ function App() {
 
 useEffect(()=> {
   getProductsForOrdersBarcode().then(setProductsForOrdersBarcode)
+  getInfoProducts().then(setAllProducts)
 }, [])
  
   useEffect(() => {
@@ -97,7 +98,6 @@ useEffect(()=> {
               }
             }) 
   
-            getInfoProducts().then(allProducts => {
               // Перебираем заказы и сравниваем и фильтруя их по артикулам выводим их названия
               const resOrders = res.map(order => { 
                 const resProd = allProducts.filter(product => product.article === order.article);
@@ -111,7 +111,7 @@ useEffect(()=> {
                   }; 
                   return updatedProduct;
                 }
-              });
+        
                
               // Получаем id каждого заказа
               const arrId = resOrders.map(item => item.id) 
@@ -211,7 +211,6 @@ useEffect(()=> {
               }
             }) 
   
-            getInfoProducts().then(allProducts => {
               // Перебираем заказы и сравниваем и фильтруя их по артикулам выводим их названия
               const resOrders = res.map(order => { 
                 const resProd = allProducts.filter(product => product.article === order.article);
@@ -225,7 +224,6 @@ useEffect(()=> {
                   }; 
                   return updatedProduct;
                 }
-              });
                
               // Получаем id каждого заказа
               const arrId = resOrders.map(item => item.id) 
@@ -374,7 +372,7 @@ useEffect(()=> {
               }
             }) 
   
-            getInfoProducts().then(allProducts => {
+              
               // Перебираем заказы и сравниваем и фильтруя их по артикулам выводим их названия
               const resOrders = res.map(order => { 
                 const resProd = allProducts.filter(product => product.article === order.article);
@@ -388,7 +386,6 @@ useEffect(()=> {
                   }; 
                   return updatedProduct;
                 }
-              });
                
               // Получаем id каждого заказа
               const arrId = resOrders.map(item => item.id) 
@@ -479,6 +476,7 @@ useEffect(()=> {
       <Routes>
         
         <Route path="/" element={<ListOrder 
+                                            allProducts={allProducts}
                                             props={allOrders} 
                                             setAllOrders={setAllOrders}
                                             ordersWB={ordersWB}  

@@ -359,7 +359,7 @@ useEffect(()=> {
         }else if(localStorage.nameCompany === 'WBMD'){
  
           getAllOrdersWBMD(dateFrom, dateTo, localStorage.apiKey).then(ordersWB => { 
- 
+            console.log(ordersWB)
             const res = ordersWB.map(item =>{  
               const filtRes = logs.find(log => log.comment == item.id) 
               
@@ -372,8 +372,9 @@ useEffect(()=> {
               }
             }) 
   
-              
+            getInfoProducts().then(allProducts => {
               // Перебираем заказы и сравниваем и фильтруя их по артикулам выводим их названия
+              console.log(allProducts)
               const resOrders = res.map(order => { 
                 const resProd = allProducts.filter(product => product.article === order.article);
                 if (resProd.length) {
@@ -386,6 +387,7 @@ useEffect(()=> {
                   }; 
                   return updatedProduct;
                 }
+              });
                
               // Получаем id каждого заказа
               const arrId = resOrders.map(item => item.id) 

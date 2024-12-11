@@ -3,7 +3,7 @@ import {useHttp} from '../hooks/http.hook';
 const useOrderService = () => {
     const {loading, request, error, clearError} = useHttp();
  
-    const _url = "https://f9fd09879062.vps.myjino.ru:49256"
+    const _url = "https://ced1fd25fcf8.vps.myjino.ru:49191"
     const getAllOrders = async (formData, headersOzon) => {
   
         const res = await request(`https://api-seller.ozon.ru/v3/posting/fbs/unfulfilled/list`, 'POST', formData, headersOzon);
@@ -26,45 +26,45 @@ const useOrderService = () => {
  
     const getAllOrdersYandex = async (clientId) => { 
       
-        const res = await request(`https://f9fd09879062.vps.myjino.ru:49256/yandex-orders/${clientId}`, 'GET');
+        const res = await request(`https://ced1fd25fcf8.vps.myjino.ru:49191/yandex-orders/${clientId}`, 'GET');
          
         return res.orders
     }
 
     const getStickersOrdersYandex = async (orderId, campaignId) => { 
         console.log(orderId)
-        const res = await request(`https://f9fd09879062.vps.myjino.ru:49256/yandex-stickers/${campaignId}/${orderId}`, 'GET', null, {'Content-Type': 'application/pdf'}, false); 
+        const res = await request(`https://ced1fd25fcf8.vps.myjino.ru:49191/yandex-stickers/${campaignId}/${orderId}`, 'GET', null, {'Content-Type': 'application/pdf'}, false); 
         return res
     }
  
     const getAllOrdersWB = async (dateFrom, dateTo, apiKey) => { 
         const unixDateFrom = getNewDate(dateFrom)
         const unixDateTo = getNewDate(dateTo)
-        const res = await request(`https://f9fd09879062.vps.myjino.ru:49256/wb-orders/${unixDateFrom}/${unixDateTo}`, 'GET', null );
+        const res = await request(`https://ced1fd25fcf8.vps.myjino.ru:49191/wb-orders/${unixDateFrom}/${unixDateTo}`, 'GET', null );
          console.log(res)
         return res.orders
     }
     const getStickersWB = async (apiKey, body) => {   
-        const res = await request(`https://f9fd09879062.vps.myjino.ru:49256/wb-stickers`, 'POST', body); 
+        const res = await request(`https://ced1fd25fcf8.vps.myjino.ru:49191/wb-stickers`, 'POST', body); 
         return res.stickers
     }
 
     const getAllOrdersWBCMA = async (dateFrom, dateTo, apiKey) => { 
         const unixDateFrom = getNewDate(dateFrom)
         const unixDateTo = getNewDate(dateTo)
-        const res = await request(`https://f9fd09879062.vps.myjino.ru:49256/wbcma-orders/${unixDateFrom}/${unixDateTo}`, 'GET', null );
+        const res = await request(`https://ced1fd25fcf8.vps.myjino.ru:49191/wbcma-orders/${unixDateFrom}/${unixDateTo}`, 'GET', null );
          console.log(res)
         return res.orders
     }
     const getStickersWBCMA = async (apiKey, body) => {   
-        const res = await request(`https://f9fd09879062.vps.myjino.ru:49256/wbcma-stickers`, 'POST', body); 
+        const res = await request(`https://ced1fd25fcf8.vps.myjino.ru:49191/wbcma-stickers`, 'POST', body); 
         return res.stickers
     }
     
     const getAllOrdersWBArsenal = async (dateFrom, dateTo, apiKey) => { 
         const unixDateFrom = getNewDate(dateFrom)
         const unixDateTo = getNewDate(dateTo)
-        const res = await request(`https://f9fd09879062.vps.myjino.ru:49256/wbarsenal-orders/${unixDateFrom}/${unixDateTo}`, 'GET', null );
+        const res = await request(`https://ced1fd25fcf8.vps.myjino.ru:49191/wbarsenal-orders/${unixDateFrom}/${unixDateTo}`, 'GET', null );
          console.log(res)
         return res.orders
     } 
@@ -72,18 +72,18 @@ const useOrderService = () => {
     const getAllOrdersWBMD = async (dateFrom, dateTo, apiKey) => { 
         const unixDateFrom = getNewDate(dateFrom)
         const unixDateTo = getNewDate(dateTo)
-        const res = await request(`https://f9fd09879062.vps.myjino.ru:49256/wbmd-orders/${unixDateFrom}/${unixDateTo}`, 'GET', null );
+        const res = await request(`https://ced1fd25fcf8.vps.myjino.ru:49191/wbmd-orders/${unixDateFrom}/${unixDateTo}`, 'GET', null );
          console.log(res)
         return res.orders
     }
     const getStickersWBMD = async (apiKey, body) => {   
-        const res = await request(`https://f9fd09879062.vps.myjino.ru:49256/wbmd-stickers`, 'POST', body); 
+        const res = await request(`https://ced1fd25fcf8.vps.myjino.ru:49191/wbmd-stickers`, 'POST', body); 
         console.log(res.stickers)
         return res.stickers
     }
 
     const getStickersWBArsenal = async (apiKey, body) => {   
-        const res = await request(`https://f9fd09879062.vps.myjino.ru:49256/wbarsenal-stickers`, 'POST', body); 
+        const res = await request(`https://ced1fd25fcf8.vps.myjino.ru:49191/wbarsenal-stickers`, 'POST', body); 
         console.log(res.stickers)
         return res.stickers
     }

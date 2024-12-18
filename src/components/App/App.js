@@ -17,6 +17,7 @@ function App() {
   const [basketsProduct, setBasketsProduct] = useState();
   const [basketsCompl, setBasketsCompl] = useState();
   const [ordersWB, setOrdersWB] = useState([])
+  const [ordersMega, setOrdersMega] = useState([])
   const [logs, setLogs] = useState([])
   const [allOrders, setAllOrders] = useState([])
   const [stickersWB, setStickersWB] = useState([]);
@@ -36,7 +37,8 @@ function App() {
           getAllOrdersWBCMA, 
           getAllOrdersWBMD,
           getAllOrdersWBArsenal,
-          getStickersWBArsenal } = useOrderService();
+          getStickersWBArsenal,
+          getAllOrdersMega } = useOrderService();
 
  
 
@@ -83,6 +85,7 @@ useEffect(()=> {
         const data = localStorage.data
         const dateFrom = `${data}T00:00:00.000Z`
         const dateTo = `${data}T23:59:59Z`
+        console.log(localStorage.nameCompany)
         if( key['Client-Id'] == 1) {   
           getAllOrdersWB(dateFrom, dateTo, localStorage.apiKey).then(ordersWB => { 
  
@@ -438,6 +441,38 @@ useEffect(()=> {
               })
             })  
           })
+        }else if(localStorage.nameCompany == 'Megamarket'){
+            console.log('megamarketGo')
+          getAllOrdersMega(dateFrom, dateTo, localStorage.apiKey).then(ordersMega =>  {
+            console.log(ordersMega)
+            const resPacked = ordersMega.map(item =>{  
+              const filtRes = logs.find(log => log.comment == item.shipmentId) 
+              
+              if(filtRes){
+                return{
+                  ...item, packed: true
+                }
+              }else{
+                return {...item, packed: false}
+              }
+            }) 
+            console.log(resPacked)
+            const res = resPacked.map(order => {
+              return order.items.map(item => {
+                return{
+                 date: order.shipmentDateTo,
+                  packed: order.packed,
+                  name: item.goodsData.name,
+                  article: item.offerId,
+                  price: item.price,
+                  quantity: item.quantity,
+                  orderId: order.shipmentId
+                }
+              })
+            })
+            setOrdersMega(res[0])
+
+          })
         }
         else{
           getAllOrders(formData, key).then(orders => { 
@@ -488,7 +523,8 @@ useEffect(()=> {
                                             headersOzon={headersOzon} 
                                             stickersWB={stickersWB}  
                                             setStickersWB={setStickersWB}
-                                            productsForOrdersBarcode={productsForOrdersBarcode}/>} />
+                                            productsForOrdersBarcode={productsForOrdersBarcode}
+                                            ordersMega={ordersMega}/>} />
         
         <Route path="/table" element={<Table basketsCompl={basketsCompl} props={product} date={date} setDate={setDate} onLoadingProducts={onLoadingProducts}  />} />
         

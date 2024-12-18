@@ -44,6 +44,18 @@ const useOrderService = () => {
          console.log(res)
         return res.orders
     }
+
+    const getAllOrdersMega = async (dateFrom, dateTo, apiKey) => { 
+         const body = {
+            "dateFrom": `${dateFrom}`,
+            "dateTo": `${dateTo}`,
+            "apiKey": `${apiKey}`
+          }
+        const res = await request(`https://ced1fd25fcf8.vps.myjino.ru:49191/megamarket-orders`, 'POST', JSON.stringify(body) );
+       
+        return res.data.shipments
+    }
+
     const getStickersWB = async (apiKey, body) => {   
         const res = await request(`https://ced1fd25fcf8.vps.myjino.ru:49191/wb-stickers`, 'POST', body); 
         return res.stickers
@@ -189,7 +201,8 @@ const useOrderService = () => {
             getStickersWBArsenal,
             getAllOrdersWBMD,
             getAllOrdersWBArsenal, 
-            getPhotoProducts}
+            getPhotoProducts,
+            getAllOrdersMega}
 }
 
 export default useOrderService;

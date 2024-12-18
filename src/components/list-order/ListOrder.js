@@ -16,8 +16,8 @@ import Table from 'react-bootstrap/Table';
 import  { useRef } from 'react'; 
 import { useReactToPrint } from 'react-to-print';
 
-const ListOrder = ({allProducts, props, setAllOrders, onLoadingProducts, date, setDate, headersOzon, ordersWB,  setOrdersWB,stickersWB,  setStickersWB, productsForOrdersBarcode}) => { 
-  console.log(allProducts)
+const ListOrder = ({allProducts, props, setAllOrders, onLoadingProducts, date, setDate, headersOzon, ordersWB,  setOrdersWB,stickersWB,  setStickersWB, productsForOrdersBarcode, ordersMega}) => { 
+    console.log(props)
     const {getLabelOzon, getStickersOrdersYandex, updateProductQuantity, loading, getPhotoProducts} = useOrderService()
     const [labels, setLabels] = useState();
     const [name, setName] = useState('')
@@ -239,8 +239,7 @@ const ListOrder = ({allProducts, props, setAllOrders, onLoadingProducts, date, s
   
     for (const prop of objectsArray) {
       try {
-        const sticker = await getStickersOrdersYandex(prop.postingNumber, campaignId);
-        console.log(sticker)
+        const sticker = await getStickersOrdersYandex(prop.postingNumber, campaignId); 
         if (!sticker.ok) {
           throw new Error('Failed to download file');
         }
@@ -327,9 +326,7 @@ async function createPDFFromImages(imageUrls) {
  
 
 const onDownlloadStickersWB = (imageObjects = stickersWB) => {
-  const imageUrls = imageObjects.map(imageObj => imageObj.url);
-  
-  console.log(imageUrls); // Проверяем, что получен правильный массив URL-адресов
+  const imageUrls = imageObjects.map(imageObj => imageObj.url); 
   
   createPDFFromImages(imageUrls).then(pdfBytes => {
     // Скачиваем PDF-документ
@@ -378,14 +375,12 @@ const productTotal = props ? colculateTotalProducts(props) : null;
 
 
 
-  function renderContent() {
-    console.log(loading)
-    console.log(ordersWB)
+  function renderContent() { 
     if (loading) {
       return <div className="loading-message">Загрузка данных, пожалуйста, подождите...</div>; // Сообщение о загрузке
     }
   
-    if (!loading && !props.length && !ordersWB.length) {
+    if (!loading && !props.length && !ordersWB.length && !ordersMega.length) {
       return <div className="no-orders-message">Заказы не найдены</div>; // Сообщение, если заказы не найдены
     }
   
@@ -393,6 +388,10 @@ const productTotal = props ? colculateTotalProducts(props) : null;
       return ordersWB.length 
         ? <PageWB ordersWB={ordersWB} deleteItemWB={deleteItemWB} setInfoOrder={setInfoOrder}/> 
         : <PageOZN elem={elem} productTotal={productTotal} dateOrders={dateOrders} />;
+    }
+
+    if (!loading && (ordersMega.length)) {
+      return <PageMega ordersMega={ordersMega} setInfoOrder={setInfoOrder}/>
     }
   
     return null;
@@ -479,8 +478,7 @@ const PageOZN = ({elem, productTotal, dateOrders}) => {
     )
 }
 
-const PageWB = ({ordersWB, deleteItemWB, setInfoOrder}) => {  
-  console.log(ordersWB)
+const PageWB = ({ordersWB, deleteItemWB, setInfoOrder}) => {   
     const Barcode = ({barcodeOrders}) => {
         const options = {
             value: `${barcodeOrders}`,
@@ -548,6 +546,75 @@ const PageWB = ({ordersWB, deleteItemWB, setInfoOrder}) => {
 
         </>
     )
+}
+
+const PageMega = ({ordersMega, setInfoOrder}) => {   
+  const Barcode = ({barcodeOrders}) => {
+      const options = {
+          value: `${barcodeOrders}`,
+          options: {
+            background: '#ffffff',
+            height: '50',
+            width: '2', 
+            display: 'flex',
+            justifyContent: 'center', 
+          }
+        };
+      const { inputRef } = useBarcode(options);
+    
+      return <svg className='barcode' ref={inputRef} style={  {
+          display: 'block',
+          margin: '0 auto',
+          textAlign: 'center'
+        }}/>;
+    };
+    console.log(ordersMega)
+    const {date} = ordersMega[0]
+  return(
+      <>
+             
+              <table className="list-order" id='list-order'>
+                  <thead>
+                      <tr className='list-order__item'>
+                          <th className='list-order__item'>№</th>
+                          <th className='list-order__item'>Номер отправления</th> 
+                          <th className='list-order__item date'>{`${date.slice(8, 10)}.${date.slice(5, 7)}.${date.slice(0, 4)}`}</th>
+                          <th className='art list-order__item'>Артикул</th> 
+                          <th className='list-order__item'>Кол-во шт.</th>
+                          <th className='list-order__item'>Склад</th>
+                          <th className='list-order__item'>Дейст.</th>
+                      </tr>
+                  </thead>
+                  <tbody>
+                    {ordersMega.map((order, i) => (
+                      <tr className={`${order.packed ? 'list-order__item packed' : 'list-order__item'}`}
+                      onClick={() => {console.log(order.article) 
+                        setInfoOrder(order.article)}}
+                      key={order.id}   >
+                        <td className='list-order__item'>{i+1}</td>
+                        <td className='list-order__item posting-number'>
+                          <Barcode barcodeOrders={`${order.orderId}`} />
+                        </td> 
+                        <td className='productName list-order__item'>{order.name}</td>
+                        <td className='list-order__item'>{order.article}</td>
+                        <td className='list-order__item'>1</td>
+                        <td className='warehouse list-order__item'>
+                          Самовывоз
+                        </td>
+                        <td className='cross_item' onClick={(event) => { 
+                          event.stopPropagation(); // предотвращаем всплытие события
+                          deleteItemWB(order.id, order.stickerId)}}>x</td> 
+                      </tr>
+                    ))}
+                  </tbody>
+
+              
+              </table>
+          
+
+
+      </>
+  )
 }
 
 const PrintableContent = React.forwardRef((props, ref) => {

@@ -51,7 +51,7 @@ const useOrderService = () => {
             "dateTo": `${dateTo}`,
             "apiKey": `${apiKey}`
           }
-        const res = await request(`https://ced1fd25fcf8.vps.myjino.ru:49191/megamarket-orders`, 'POST', JSON.stringify(body) );
+        const res = await request(`https://ced1fd25fcf8.vps.myjino.ru:49191/megamarket-ordersdate`, 'POST', JSON.stringify(body) );
        console.log(res)
         return res.data.shipments
     }

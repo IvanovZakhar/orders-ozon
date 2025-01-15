@@ -27,8 +27,8 @@ const useOrderService = () => {
     const getAllOrdersYandex = async (clientId) => { 
       
         const res = await request(`https://ced1fd25fcf8.vps.myjino.ru:49191/yandex-orders/${clientId}`, 'GET');
-         
-        return res.orders
+        console.log(res) 
+        return res
     }
 
     const getStickersOrdersYandex = async (orderId, campaignId) => { 

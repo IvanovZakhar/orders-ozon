@@ -28,6 +28,7 @@ const ListOrder = ({allProducts, props, setAllOrders, onLoadingProducts, date, s
     const [dataOrder, setDataOrder] =useState([])
     const [ordersDelivery, setOrdersDelivery] = useState([])
     const [errorInput, setErrorInput] = useState(false)
+    const [dateInput, setDateInput] = useState('')
     const ordersDeliveryRef = useRef(ordersDelivery); 
 
     const handleClose = () => setShow(false);
@@ -74,25 +75,38 @@ const ListOrder = ({allProducts, props, setAllOrders, onLoadingProducts, date, s
     }, [props, ordersWB ])
 
     const handleKeyDown = (event) => {
-      if (event.ctrlKey && event.key === 'p' || event.ctrlKey && event.key === 'з') {
-        console.log(props)
-          if(ordersWB.length || props[0].warehouse === 'Яндекс'){
-            return
-          }
-
-        // Проверяем, что массив не пустой и первый элемент существует
+      if (event.ctrlKey && (event.key === 'p' || event.key === 'з')) {
+        event.preventDefault(); // Отключаем стандартное действие Ctrl + P (печать)
+    
+        if (ordersWB.length || props[0]?.warehouse === 'Яндекс') {
+          return; // Если условия выполняются, ничего не делаем
+        }
+    
+        // Проверяем, что массив не пустой и первый элемент имеет дату
         if (!ordersDeliveryRef.current.length || !ordersDeliveryRef.current[0]?.deliveryDate) {
           console.log('Дата доставки не задана или массив пуст. Логика отключена.');
-          setErrorInput(true)
-          event.preventDefault(); // Отключаем стандартное действие Ctrl + P (печать)
-          return; // Прерываем выполнение
+          setErrorInput(true);
+          return;
         }
+    
         console.log('Ctrl + P была нажата');
-        // Добавьте вашу логику здесь 
-        setErrorInput(false)
-        updateOzonOrders(ordersDeliveryRef.current).then(res => console.log(res))
+        setErrorInput(false);
+    
+        // Отправляем обновленные данные
+        updateOzonOrders(ordersDeliveryRef.current)
+          .then(() => {
+            console.log('Данные успешно обновлены');
+            // После обновления вызываем печать
+            setTimeout(() => {
+              window.print();
+            }, 500); // Небольшая задержка для завершения обновления состояния
+          })
+          .catch((error) => {
+            console.error('Ошибка при обновлении данных:', error);
+          });
       }
     };
+    
     
     useEffect(() => {
       window.addEventListener('keydown', handleKeyDown);
@@ -407,6 +421,7 @@ const productTotal = props ? colculateTotalProducts(props) : null;
   }
 
   const addedDeliveryDateOzn = (date, data) => {
+    setDateInput(date)
     const newOrders = data.map(order => ({
       ...order,
       deliveryDate: date,
@@ -431,7 +446,14 @@ const productTotal = props ? colculateTotalProducts(props) : null;
     if (!loading && (props.length || ordersWB.length)) {
       return ordersWB.length 
         ? <PageWB ordersWB={ordersWB} deleteItemWB={deleteItemWB} setInfoOrder={setInfoOrder}/> 
-        : <PageOZN elem={elem} productTotal={productTotal} dateOrders={dateOrders} addedDeliveryDateOzn={addedDeliveryDateOzn} props={props} errorInput={errorInput}/>;
+        : <PageOZN 
+              elem={elem} 
+              productTotal={productTotal} 
+              dateOrders={dateOrders} 
+              addedDeliveryDateOzn={addedDeliveryDateOzn} 
+              props={props} 
+              errorInput={errorInput}
+              dateInput={dateInput}/>;
     }
 
     if (!loading && (ordersMega.length)) {
@@ -474,7 +496,7 @@ const productTotal = props ? colculateTotalProducts(props) : null;
     )
     }
 
-const PageOZN = ({elem, productTotal, dateOrders, addedDeliveryDateOzn, props, errorInput}) => {
+const PageOZN = ({elem, productTotal, dateOrders, addedDeliveryDateOzn, props, errorInput, dateInput}) => {
     
     return(
         <>
@@ -491,6 +513,7 @@ const PageOZN = ({elem, productTotal, dateOrders, addedDeliveryDateOzn, props, e
                             <th className='list-order__item date'>
                               <input
                                 type="date"
+                                value={dateInput}
                                 onChange={(e) => addedDeliveryDateOzn(e.target.value, props)}
                                 style={{ border: `${errorInput ? '3px solid red': ''}` }} // Укажите стиль корректно как объект
                               />

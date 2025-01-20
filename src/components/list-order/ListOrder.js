@@ -6,7 +6,7 @@ import React from 'react';
 import jsPDF from 'jspdf';
 import html2canvas from 'html2canvas';
 import { useBarcode } from 'next-barcode'; 
-import {  PDFDocument, PDFName } from 'pdf-lib';
+import {  error, PDFDocument, PDFName } from 'pdf-lib';
 import { saveAs } from 'file-saver';
 import Alert from 'react-bootstrap/Alert';
 import Button from 'react-bootstrap/Button'; 
@@ -18,7 +18,7 @@ import { useReactToPrint } from 'react-to-print';
 
 const ListOrder = ({allProducts, props, setAllOrders, onLoadingProducts, date, setDate, headersOzon, ordersWB,  setOrdersWB,stickersWB,  setStickersWB, productsForOrdersBarcode, ordersMega}) => { 
     console.log(props)
-    const {getLabelOzon, getStickersOrdersYandex, updateProductQuantity, loading, getPhotoProducts} = useOrderService()
+    const {getLabelOzon, getStickersOrdersYandex, updateProductQuantity, loading, getPhotoProducts, updateOzonOrders} = useOrderService()
     const [labels, setLabels] = useState();
     const [name, setName] = useState('')
     const [stickersYandex, setStickersYandex] = useState([])
@@ -26,9 +26,14 @@ const ListOrder = ({allProducts, props, setAllOrders, onLoadingProducts, date, s
     const [requestPucked, setRequestPucked] = useState([])
     const [show, setShow] = useState(false);
     const [dataOrder, setDataOrder] =useState([])
+    const [ordersDelivery, setOrdersDelivery] = useState([])
+    const [errorInput, setErrorInput] = useState(false)
+    const ordersDeliveryRef = useRef(ordersDelivery); 
 
     const handleClose = () => setShow(false);
     const handleShow = () => setShow(true);
+
+    console.log(props)
 
     useEffect(() => {
       const notReadyProducts = props.filter(prop => !prop.packed)
@@ -67,6 +72,35 @@ const ListOrder = ({allProducts, props, setAllOrders, onLoadingProducts, date, s
      res.length ? setNotReadyProducts(res) : setNotReadyProducts(resWb)
 
     }, [props, ordersWB ])
+
+    const handleKeyDown = (event) => {
+      if (event.ctrlKey && event.key === 'p' || event.ctrlKey && event.key === 'з') {
+        console.log(props)
+          if(ordersWB.length || props[0].warehouse === 'Яндекс'){
+            return
+          }
+
+        // Проверяем, что массив не пустой и первый элемент существует
+        if (!ordersDeliveryRef.current.length || !ordersDeliveryRef.current[0]?.deliveryDate) {
+          console.log('Дата доставки не задана или массив пуст. Логика отключена.');
+          setErrorInput(true)
+          event.preventDefault(); // Отключаем стандартное действие Ctrl + P (печать)
+          return; // Прерываем выполнение
+        }
+        console.log('Ctrl + P была нажата');
+        // Добавьте вашу логику здесь 
+        setErrorInput(false)
+        updateOzonOrders(ordersDeliveryRef.current).then(res => console.log(res))
+      }
+    };
+    
+    useEffect(() => {
+      window.addEventListener('keydown', handleKeyDown);
+      return () => {
+        window.removeEventListener('keydown', handleKeyDown);
+      };
+    }, [ordersWB, props]);
+
  
     function puckedProducts (){
       notReadyProducts.forEach(product => { 
@@ -372,6 +406,16 @@ const productTotal = props ? colculateTotalProducts(props) : null;
     })
   }
 
+  const addedDeliveryDateOzn = (date, data) => {
+    const newOrders = data.map(order => ({
+      ...order,
+      deliveryDate: date,
+    })); 
+    setOrdersDelivery(newOrders);
+    ordersDeliveryRef.current = newOrders; // Обновляем ref, чтобы он всегда содержал актуальные данные
+  };
+
+
 
 
 
@@ -387,7 +431,7 @@ const productTotal = props ? colculateTotalProducts(props) : null;
     if (!loading && (props.length || ordersWB.length)) {
       return ordersWB.length 
         ? <PageWB ordersWB={ordersWB} deleteItemWB={deleteItemWB} setInfoOrder={setInfoOrder}/> 
-        : <PageOZN elem={elem} productTotal={productTotal} dateOrders={dateOrders} />;
+        : <PageOZN elem={elem} productTotal={productTotal} dateOrders={dateOrders} addedDeliveryDateOzn={addedDeliveryDateOzn} props={props} errorInput={errorInput}/>;
     }
 
     if (!loading && (ordersMega.length)) {
@@ -430,7 +474,7 @@ const productTotal = props ? colculateTotalProducts(props) : null;
     )
     }
 
-const PageOZN = ({elem, productTotal, dateOrders}) => {
+const PageOZN = ({elem, productTotal, dateOrders, addedDeliveryDateOzn, props, errorInput}) => {
     
     return(
         <>
@@ -444,7 +488,13 @@ const PageOZN = ({elem, productTotal, dateOrders}) => {
                             {/* <th className='list-order__item date'>{dateOrders.length > 10 ? 
                                                         `${dateOrders.slice(8, 10)}.${dateOrders.slice(5, 7)}.${dateOrders.slice(0, 4)}` : 
                                                         `${dateOrders.slice(0, 2)}.${dateOrders.slice(3, 5)}.${dateOrders.slice(6, 10)}`}</th> */}
-                            <th className='list-order__item date'><input type='date'/></th>
+                            <th className='list-order__item date'>
+                              <input
+                                type="date"
+                                onChange={(e) => addedDeliveryDateOzn(e.target.value, props)}
+                                style={{ border: `${errorInput ? '3px solid red': ''}` }} // Укажите стиль корректно как объект
+                              />
+                            </th>
                             <th className='art list-order__item'>Артикул</th>
                             <th className='list-order__item'>Стоимость</th>
                             <th className='list-order__item'>Кол-во шт.</th>

@@ -56,6 +56,13 @@ const useOrderService = () => {
         return res.data.shipments
     }
 
+
+    const updateOzonOrders = async (newDate) => {  
+       const res = await request(`https://ced1fd25fcf8.vps.myjino.ru:49191/newdate-ozon-orders`, 'POST', JSON.stringify(newDate) );
+        console.log(res)
+       return res
+   }
+
     const getStickersWB = async (apiKey, body) => {   
         const res = await request(`https://ced1fd25fcf8.vps.myjino.ru:49191/wb-stickers`, 'POST', body); 
         return res.stickers
@@ -202,7 +209,8 @@ const useOrderService = () => {
             getAllOrdersWBMD,
             getAllOrdersWBArsenal, 
             getPhotoProducts,
-            getAllOrdersMega}
+            getAllOrdersMega,
+            updateOzonOrders}
 }
 
 export default useOrderService;

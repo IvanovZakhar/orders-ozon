@@ -76,11 +76,11 @@ const ListOrder = ({allProducts, props, setAllOrders, onLoadingProducts, date, s
 
     const handleKeyDown = (event) => {
       if (event.ctrlKey && (event.key === 'p' || event.key === 'з')) {
-        event.preventDefault(); // Отключаем стандартное действие Ctrl + P (печать)
-    
+       
         if (ordersWB.length || props[0]?.warehouse === 'Яндекс') {
           return; // Если условия выполняются, ничего не делаем
         }
+        event.preventDefault(); // Отключаем стандартное действие Ctrl + P (печать)
     
         // Проверяем, что массив не пустой и первый элемент имеет дату
         if (!ordersDeliveryRef.current.length || !ordersDeliveryRef.current[0]?.deliveryDate) {

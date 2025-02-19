@@ -38,7 +38,8 @@ function App() {
           getAllOrdersWBMD,
           getAllOrdersWBArsenal,
           getStickersWBArsenal,
-          getAllOrdersMega } = useOrderService();
+          getAllOrdersMega,
+          getAllOrdersOZNfromDB } = useOrderService();
 
  
 
@@ -475,30 +476,33 @@ useEffect(()=> {
           })
         }
         else{
-          getAllOrders(formData, key).then(orders => { 
-           
-              const res = orders.map(order => {
-                const filtRes = logs.find(log => log.comment === order.postingNumber)
-                if(filtRes){
-                  return{
-                    ...order, packed: true
-                  }
-                }else{
-                  return order
-                }
-    
-              })
-         
-              setAllOrders(res)
-         
-      })
+          getAllOrders(formData, key).then(orders => {  
+            getAllOrdersOZNfromDB().then(orderDB => {
+              console.log(orderDB)
+                console.log("Orders from API:", orders);
+                console.log("Orders from DB:", orderDB);
+        
+                // Сопоставляем статусы из orderDB с orders
+                const result = orders.map(order => {
+                    // Ищем совпадающий заказ в orderDB
+                    const matchingOrder = orderDB.find(dbOrder => dbOrder.posting_number === order.postingNumber);
+        
+                    return {
+                        ...order,
+                        status: matchingOrder ? matchingOrder.status : "unknown" // Если не найден, ставим "unknown"
+                    };
+                });
+        
+                console.log("Updated orders:", result);
+                setAllOrders(result);
+            });
+        });
+        
         }
       })
          
     }, [localStorage.clientId]) 
-  const onLoadingProducts = (data = localStorage.data) => {
- 
-    const arr = [];
+  const onLoadingProducts = (data = localStorage.data) => { 
  
       getAllOrders(formData, headersOzon).then(setOrders);
      

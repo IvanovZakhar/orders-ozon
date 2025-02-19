@@ -149,12 +149,11 @@ const ListOrder = ({allProducts, props, setAllOrders, onLoadingProducts, date, s
             productPrice,
             quantity,
             warehouse, 
-            packed} = item;  
-            const green = packed ? 'packed' : ''
+            status} = item;   
            
             return(
                     <tr 
-                      className={`list-order__item ${green}`} 
+                      className={`list-order__item ${status}`} 
                       key={item.postingNumber} 
                       onClick={() => {setInfoOrder(productArt, postingNumber)}}
                     >

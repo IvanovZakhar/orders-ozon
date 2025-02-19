@@ -18,7 +18,11 @@ const useOrderService = () => {
     }
 
     
-
+    const getAllOrdersOZNfromDB = async () => {  
+        const res = await request(`${_url}/arsenal-orders`, 'GET' );   
+        console.log(res)
+        return res
+    }
     const getLabelOzon = async (url, method, body, headersOzon) => {
         const res = await request(url, method, body, headersOzon);
         return res
@@ -210,7 +214,8 @@ const useOrderService = () => {
             getAllOrdersWBArsenal, 
             getPhotoProducts,
             getAllOrdersMega,
-            updateOzonOrders}
+            updateOzonOrders, 
+            getAllOrdersOZNfromDB}
 }
 
 export default useOrderService;

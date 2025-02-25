@@ -285,7 +285,7 @@ useEffect(()=> {
  
             const res = ordersWB.map(item =>{  
               const filtRes = logs.find(log => log.comment == item.id) 
-              
+
               if(filtRes){
                 return{
                   ...item, packed: true
@@ -298,18 +298,18 @@ useEffect(()=> {
             getInfoProducts().then(allProducts => {
               // Перебираем заказы и сравниваем и фильтруя их по артикулам выводим их названия
               const resOrders = res.map(order => { 
-                const resProd = allProducts.filter(product => product.article === order.article);
-                if (resProd.length) {
-                  // Создаем новый объект с обновленными данными
-                  const updatedProduct = {
-                    ...resProd[0], // Копируем свойства из существующего продукта
+                const resProd = allProducts.find(product => product.article === order.article);
+                if (resProd) {
+                  return {
+                    ...resProd,
                     id: order.id,
                     warehouseId: order.warehouseId,
                     packed: order.packed
-                  }; 
-                  return updatedProduct;
+                  };
                 }
-              });
+                return null; // или можно вернуть `undefined`, но `null` лучше видно в консоли
+              }).filter(item => item !== null); // Убираем несуществующие элементы
+              console.log(resOrders)
                
               // Получаем id каждого заказа
               const arrId = resOrders.map(item => item.id) 

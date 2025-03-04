@@ -283,28 +283,18 @@ useEffect(()=> {
  
           getAllOrdersWBArsenal(dateFrom, dateTo, localStorage.apiKey).then(ordersWB => { 
  
-            const res = ordersWB.map(item =>{  
-              const filtRes = logs.find(log => log.comment == item.id) 
-
-              if(filtRes){
-                return{
-                  ...item, packed: true
-                }
-              }else{
-                return item
-              }
-            }) 
+  
   
             getInfoProducts().then(allProducts => {
               // Перебираем заказы и сравниваем и фильтруя их по артикулам выводим их названия
-              const resOrders = res.map(order => { 
+              const resOrders = ordersWB.map(order => { 
                 const resProd = allProducts.find(product => product.article === order.article);
                 if (resProd) {
                   return {
                     ...resProd,
                     id: order.id,
                     warehouseId: order.warehouseId,
-                    packed: order.packed
+                    status: order.status
                   };
                 }
                 return null; // или можно вернуть `undefined`, но `null` лучше видно в консоли
@@ -347,7 +337,7 @@ useEffect(()=> {
                           'article': order.article,
                           'stickerId': result[0].partB ,
                           'warehouseId': order.warehouseId,
-                          'packed': order.packed
+                          'packed': order.packed 
                       };
                       return obj;
                   } else {

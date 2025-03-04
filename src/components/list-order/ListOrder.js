@@ -570,7 +570,7 @@ const PageWB = ({ordersWB, deleteItemWB, setInfoOrder}) => {
             textAlign: 'center'
           }}/>;
       };
-
+      console.log(ordersWB)
 
     return(
         <>
@@ -590,7 +590,7 @@ const PageWB = ({ordersWB, deleteItemWB, setInfoOrder}) => {
                     </thead>
                     <tbody>
                       {ordersWB.map((order, i) => (
-                        <tr className={`${order.packed ? 'list-order__item packed' : 'list-order__item'}`}
+                        <tr className={`${order.status === 'packed' ? 'list-order__item packed' : 'list-order__item'}`}
                         onClick={() => {setInfoOrder(order.article)}}
                         key={order.id}   >
                           <td className='list-order__item'>{i+1}</td>

@@ -337,7 +337,8 @@ useEffect(()=> {
                           'article': order.article,
                           'stickerId': result[0].partB ,
                           'warehouseId': order.warehouseId,
-                          'packed': order.packed 
+                          'packed': order.packed ,
+                          'status': order.status
                       };
                       return obj;
                   } else {

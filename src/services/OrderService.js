@@ -11,6 +11,8 @@ const useOrderService = () => {
         return res.result.postings.map(transformProduct)
     }
 
+ 
+
     const getAllProducts = async () => {
         const res = await request(`https://server-market-arsenal.vercel.app/products-for-orders`, 'GET');
      
@@ -19,8 +21,7 @@ const useOrderService = () => {
 
     
     const getAllOrdersOZNfromDB = async () => {  
-        const res = await request(`${_url}/arsenal-orders`, 'GET' );   
-        console.log(res)
+        const res = await request(`${_url}/arsenal-orders`, 'GET' );    
         return res
     }
     const getLabelOzon = async (url, method, body, headersOzon) => {
@@ -176,8 +177,7 @@ const useOrderService = () => {
     return res 
     }
  
-    const transformProduct = (product) => {
-        
+    const transformProduct = (product) => { 
         return{
             postingNumber: product.posting_number,
             date: product.shipment_date,
@@ -185,8 +185,8 @@ const useOrderService = () => {
             productName: product.products[0].name,
             productPrice: product.products[0].price,
             quantity: product.products[0].quantity,
-            warehouse: product.delivery_method.warehouse
-        
+            warehouse: product.delivery_method.warehouse,
+            deliveryDate: product.deliveryDate ? product.deliveryDate : null
         } 
      }
 
@@ -216,7 +216,7 @@ const useOrderService = () => {
             getPhotoProducts,
             getAllOrdersMega,
             updateOzonOrders, 
-            getAllOrdersOZNfromDB}
+            getAllOrdersOZNfromDB }
 }
 
 export default useOrderService;

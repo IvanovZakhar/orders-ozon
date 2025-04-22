@@ -23,6 +23,7 @@ function App() {
   const [stickersWB, setStickersWB] = useState([]);
   const [arrIdsWB, setArrIdWb] = useState([])
   const [productsForOrdersBarcode, setProductsForOrdersBarcode] = useState([])
+  const [ordersOzonDb, setOrdersOzonDb] = useState([])
   const { getAllOrders, 
           getInfoProducts, 
           getBaskets, 
@@ -39,7 +40,7 @@ function App() {
           getAllOrdersWBArsenal,
           getStickersWBArsenal,
           getAllOrdersMega,
-          getAllOrdersOZNfromDB } = useOrderService();
+          getAllOrdersOZNfromDB  } = useOrderService();
 
  
 
@@ -66,7 +67,7 @@ function App() {
 
 useEffect(()=> {
   getProductsForOrdersBarcode().then(setProductsForOrdersBarcode)
-  getInfoProducts().then(setAllProducts)
+  getInfoProducts().then(setAllProducts) 
 }, [])
  
   useEffect(() => {
@@ -469,9 +470,7 @@ useEffect(()=> {
         else{
           getAllOrders(formData, key).then(orders => {  
             getAllOrdersOZNfromDB().then(orderDB => {
-              console.log(orderDB)
-                console.log("Orders from API:", orders);
-                console.log("Orders from DB:", orderDB);
+            
         
                 // Сопоставляем статусы из orderDB с orders
                 const result = orders.map(order => {
@@ -480,7 +479,8 @@ useEffect(()=> {
         
                     return {
                         ...order,
-                        status: matchingOrder ? matchingOrder.status : "unknown" // Если не найден, ставим "unknown"
+                        status: matchingOrder ? matchingOrder.status : "unknown", // Если не найден, ставим "unknown",
+                        deliveryDate: matchingOrder ? matchingOrder.deliveryDate : null
                     };
                 });
         

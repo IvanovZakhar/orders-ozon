@@ -34,7 +34,7 @@ const ListOrder = ({allProducts, props, setAllOrders, onLoadingProducts, date, s
     const handleClose = () => setShow(false);
     const handleShow = () => setShow(true);
 
-    console.log(props)
+    
 
     useEffect(() => {
       const notReadyProducts = props.filter(prop => !prop.packed)
@@ -149,13 +149,14 @@ const ListOrder = ({allProducts, props, setAllOrders, onLoadingProducts, date, s
             productPrice,
             quantity,
             warehouse, 
-            status} = item;   
-           
+            status, deliveryDate} = item;   
+            const statusPacked =  deliveryDate == '2024-01-20T00:00:00.000Z' ? null : 'awaiting_packed'
+            console.log(statusPacked)  
             return(
                     <tr 
-                      className={`list-order__item ${status}`} 
+                      className={`list-order__item ${status} ${statusPacked}`} 
                       key={item.postingNumber} 
-                      onClick={() => {setInfoOrder(productArt, postingNumber)}}
+                     
                     >
 
                           <td className='list-order__item'>{i+=1}</td>
@@ -166,7 +167,7 @@ const ListOrder = ({allProducts, props, setAllOrders, onLoadingProducts, date, s
                               `${date.slice(0, 2)}.${date.slice(3, 5)}.${date.slice(6, 10)}`
                             }
                           </td>
-                          <td className='productName list-order__item'>{productName}</td>
+                          <td className='productName list-order__item'  onClick={() => {setInfoOrder(productArt, postingNumber)}}>{productName}</td>
                           <td className='list-order__item'>{productArt}</td>
                           <td className='list-order__item'>
                             {productPrice.length > 7 ? productPrice.slice(0, -5) : productPrice}
@@ -461,7 +462,26 @@ const productTotal = props ? colculateTotalProducts(props) : null;
   
     return null;
   }
-  
+  const dateOn = localStorage.data
+
+  // Получение текущей даты
+  const today = new Date();
+
+    // Функция для форматирования даты в чч.мм.гг
+    function formatDate(date) {
+      const day = String(date.getDate()).padStart(2, '0');        // День
+      const month = String(date.getMonth() + 1).padStart(2, '0'); // Месяц (0-11)
+      const year = String(date.getFullYear()).slice(-2);          // Последние 2 цифры года
+      return `${day}.${month}.${year}`;
+    }
+
+    function formatDateOn(date) {
+      const day = date.slice(8,10)       // День
+      const month =  date.slice(5,7) // Месяц (0-11)
+      const year = date.slice(2,4)     // Последние 2 цифры года
+      return `${day}.${month}.${year}`;
+    }
+    
     return(
         <>
              <NavLink onLoadingProducts={onLoadingProducts} 
@@ -482,7 +502,10 @@ const productTotal = props ? colculateTotalProducts(props) : null;
             <div className='buttons'>  
               <Button onClick={puckedProducts} variant="outline-success">Упаковать товары</Button> 
             </div>
-
+            <div className='date-info'>
+              <p>{ `Дата заказов: ${formatDateOn(dateOn)}` }</p>
+              <p>{`Дата печати: ${formatDate(today)}`}</p>
+            </div>
             {requestPucked.map(item => {
               return (
                 <Alert variant="success" style={{marginTop: '20px'}}> 
@@ -591,14 +614,15 @@ const PageWB = ({ordersWB, deleteItemWB, setInfoOrder}) => {
                     <tbody>
                       {ordersWB.map((order, i) => (
                         <tr className={`${order.status === 'packed' ? 'list-order__item packed' : 'list-order__item'}`}
-                        onClick={() => {setInfoOrder(order.article)}}
+                      
                         key={order.id}   >
                           <td className='list-order__item'>{i+1}</td>
                           <td className='list-order__item posting-number'>
                             <Barcode barcodeOrders={`WB${order.id}`} />
                           </td>
                           <td className='list-order__item'>{order.stickerId}</td>
-                          <td className='productName list-order__item'>{order.name}</td>
+                          <td className='productName list-order__item'
+                                        onClick={() => {setInfoOrder(order.article)}}>{order.name}</td>
                           <td className='list-order__item'>{order.article}</td>
                           <td className='list-order__item'>1</td>
                           <td className='warehouse list-order__item'>

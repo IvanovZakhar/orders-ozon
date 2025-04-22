@@ -150,7 +150,7 @@ const ListOrder = ({allProducts, props, setAllOrders, onLoadingProducts, date, s
             quantity,
             warehouse, 
             status, deliveryDate} = item;   
-            const statusPacked =  deliveryDate == '2024-01-20T00:00:00.000Z' ? null : 'awaiting_packed'
+            const statusPacked =  deliveryDate  ? 'awaiting_packed': null 
             console.log(statusPacked)  
             return(
                     <tr 

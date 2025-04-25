@@ -27,10 +27,37 @@ const useOrderService = () => {
         const res = await request(`${_url}/arsenal-orders`, 'GET' );    
         return res
     }
-    const getLabelOzon = async (url, method, body, headersOzon) => {
-        const res = await request(url, method, body, headersOzon);
-        return res
-    }
+    const getLabelOzon = async (postingNumbers, headersOzon) => {
+        const body = {
+            postingNumbers,
+            headersOzn: headersOzon
+        };
+    
+        const response = await fetch(`${_url}/ozon-label`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(body)
+        });
+    
+        if (!response.ok) {
+            const error = await response.json();
+            throw new Error(error.error || `Ошибка при получении ярлыков, статус: ${response.status}`);
+        }
+    
+        const data = await response.json();
+    
+        if (!data.file_url) {
+            throw new Error('Сервер не вернул ссылку на файл с ярлыками');
+        }
+    
+        window.open(data.file_url, '_blank'); // 🔥 Автоматически открываем PDF в новой вкладке
+    };
+    
+    
+    
+    
  
     const getAllOrdersYandex = async (clientId) => { 
       

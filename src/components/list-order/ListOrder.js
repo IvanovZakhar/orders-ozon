@@ -247,40 +247,23 @@ const ListOrder = ({allProducts, props, setAllOrders, onLoadingProducts, date, s
       };
    
 
-    function getLabels () {
-        const postingNumbers = readySort ? readySort.map(obj => obj.postingNumber): null
+      function getLabels() {
+        const postingNumbers = readySort ? readySort.map(obj => obj.postingNumber) : null;
     
-        const body = {
-            "posting_number": postingNumbers
-        };
+        if (!postingNumbers || postingNumbers.length === 0) {
+            console.warn('Нет номеров заказов для генерации ярлыков');
+            return;
+        }
     
-            
-        getLabelOzon('https://api-seller.ozon.ru/v1/posting/fbs/package-label/create', 'POST', JSON.stringify(body), headersOzon)
-        .then(data => { 
-            const taskId = {
-                "task_id": data.result.task_id
-            }; 
-    
-            const interval = setInterval(() => {
-                getLabelOzon('https://api-seller.ozon.ru/v1/posting/fbs/package-label/get', 'POST', JSON.stringify(taskId), headersOzon)
-                    .then(res => { 
-                        if (res.result.status === 'completed') {
-                            clearInterval(interval);
-                            setLabels(res.result.file_url);
-                        } else if (res.result.status === 'error') {
-                            clearInterval(interval);
-                            console.log('Ошибка при формировании файла с этикетками:', res.result.error);
-                        }
-                    })
-                    .catch(error => {
-                        clearInterval(interval);
-                        console.log('Ошибка при проверке статуса задания:', error);
-                    });
-            }, 3000);
-        })
-        .catch(error => console.log('Ошибка при создании задания:', error));
-    
+        getLabelOzon(postingNumbers, headersOzon)
+            .then(() => {
+                console.log('Ярлыки успешно получены и открыты');
+            })
+            .catch(error => {
+                console.error('Ошибка при получении ярлыков:', error.message);
+            });
     }
+    
 
 
     async function onGetStickersYandex(objectsArray = sortedElemsSticker) { 

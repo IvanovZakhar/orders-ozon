@@ -5,9 +5,12 @@ const useOrderService = () => {
  
     const _url = "https://ced1fd25fcf8.vps.myjino.ru:49191"
     const getAllOrders = async (formData, headersOzon) => {
-  
-        const res = await request(`https://api-seller.ozon.ru/v3/posting/fbs/unfulfilled/list`, 'POST', formData, headersOzon);
-            
+        const body = {
+            formDataOZN: formData,
+            headersOzn: headersOzon
+        };
+        const res = await request(`${_url}/ozon-data`, 'POST', JSON.stringify(body) );
+            console.log(res)
         return res.result.postings.map(transformProduct)
     }
 

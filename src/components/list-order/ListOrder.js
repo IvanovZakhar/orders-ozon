@@ -15,6 +15,9 @@ import Image from 'react-bootstrap/Image';
 import Table from 'react-bootstrap/Table';
 import  { useRef } from 'react'; 
 import { useReactToPrint } from 'react-to-print';
+import ModalOrder from './components/ModalOrder'; 
+import OrderTableWB from './components/OrderTableWB';
+import PageOZN from './components/PageOZN';
 
 const ListOrder = ({allProducts, props, setAllOrders, onLoadingProducts, date, setDate, headersOzon, ordersWB,  setOrdersWB,stickersWB,  setStickersWB, productsForOrdersBarcode, ordersMega}) => { 
     console.log(props)
@@ -151,7 +154,7 @@ const ListOrder = ({allProducts, props, setAllOrders, onLoadingProducts, date, s
             warehouse, 
             status, deliveryDate} = item;   
             const statusPacked =  deliveryDate  ? 'awaiting_packed': null 
-            console.log(statusPacked)  
+            console.log(date)  
             return(
                     <tr 
                       className={`list-order__item ${status} ${statusPacked}`} 
@@ -445,7 +448,12 @@ const productTotal = props ? colculateTotalProducts(props) : null;
   
     if (!loading && (props.length || ordersWB.length)) {
       return ordersWB.length 
-        ? <PageWB ordersWB={ordersWB} deleteItemWB={deleteItemWB} setInfoOrder={setInfoOrder}/> 
+        ? <OrderTableWB
+        ordersWB={ordersWB}
+        deleteItemWB={deleteItemWB}
+        setInfoOrder={setInfoOrder}
+      />
+      
         : <PageOZN 
               elem={elem} 
               productTotal={productTotal} 
@@ -513,205 +521,136 @@ const productTotal = props ? colculateTotalProducts(props) : null;
               </Alert>
               )
             })}
-            <ModalOrder dataOrder={dataOrder} show={show} handleClose={handleClose}/>
+             <ModalOrder dataOrder={dataOrder} show={show} handleClose={handleClose} />
         </>
     )
     }
 
-const PageOZN = ({elem, productTotal, dateOrders, addedDeliveryDateOzn, props, errorInput, dateInput}) => {
+// const PageOZN = ({elem, productTotal, dateOrders, addedDeliveryDateOzn, props, errorInput, dateInput}) => {
     
-    return(
-        <>
+//     return(
+//         <>
                
-                <table className="list-order" id='list-order'>
-                    <thead>
-                        <tr className='list-order__item'>
-                            <th className='list-order__item'>№</th>
-                            <th className='list-order__item'>Номер отправления</th>
-                            <th className='list-order__item'>Дата отгрузки</th>
-                            {/* <th className='list-order__item date'>{dateOrders.length > 10 ? 
-                                                        `${dateOrders.slice(8, 10)}.${dateOrders.slice(5, 7)}.${dateOrders.slice(0, 4)}` : 
-                                                        `${dateOrders.slice(0, 2)}.${dateOrders.slice(3, 5)}.${dateOrders.slice(6, 10)}`}</th> */}
-                            <th className='list-order__item date'>
-                              <input
-                                type="date"
-                                value={dateInput}
-                                onChange={(e) => addedDeliveryDateOzn(e.target.value, props)}
-                                style={{ border: `${errorInput ? '3px solid red': ''}` }} // Укажите стиль корректно как объект
-                              />
-                            </th>
-                            <th className='art list-order__item'>Артикул</th>
-                            <th className='list-order__item'>Стоимость</th>
-                            <th className='list-order__item'>Кол-во шт.</th>
-                            <th className='list-order__item'>Склад</th>
-                            <th className='list-order__item'>Дейст.</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {elem}
+//                 <table className="list-order" id='list-order'>
+//                     <thead>
+//                         <tr className='list-order__item'>
+//                             <th className='list-order__item'>№</th>
+//                             <th className='list-order__item'>Номер отправления</th>
+//                             <th className='list-order__item'>Дата отгрузки</th>
+//                             {/* <th className='list-order__item date'>{dateOrders.length > 10 ? 
+//                                                         `${dateOrders.slice(8, 10)}.${dateOrders.slice(5, 7)}.${dateOrders.slice(0, 4)}` : 
+//                                                         `${dateOrders.slice(0, 2)}.${dateOrders.slice(3, 5)}.${dateOrders.slice(6, 10)}`}</th> */}
+//                             <th className='list-order__item date'>
+//                               <input
+//                                 type="date"
+//                                 value={dateInput}
+//                                 onChange={(e) => addedDeliveryDateOzn(e.target.value, props)}
+//                                 style={{ border: `${errorInput ? '3px solid red': ''}` }} // Укажите стиль корректно как объект
+//                               />
+//                             </th>
+//                             <th className='art list-order__item'>Артикул</th>
+//                             <th className='list-order__item'>Стоимость</th>
+//                             <th className='list-order__item'>Кол-во шт.</th>
+//                             <th className='list-order__item'>Склад</th>
+//                             <th className='list-order__item'>Дейст.</th>
+//                         </tr>
+//                     </thead>
+//                     <tbody>
+//                         {elem}
                         
-                    </tbody>
+//                     </tbody>
                 
-                </table>
+//                 </table>
             
-                <table className="list-order" id='list-order'>
-                    <h2>Итого</h2>
-                    <thead>
-                        <tr className='list-order__item'>
-                            <th className='list-order__item'>Артикул</th> 
-                            <th className='list-order__item'>Название</th>
-                            <th className='list-order__item'>Кол-во</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {productTotal}
-                    </tbody>
+//                 <table className="list-order" id='list-order'>
+//                     <h2>Итого</h2>
+//                     <thead>
+//                         <tr className='list-order__item'>
+//                             <th className='list-order__item'>Артикул</th> 
+//                             <th className='list-order__item'>Название</th>
+//                             <th className='list-order__item'>Кол-во</th>
+//                         </tr>
+//                     </thead>
+//                     <tbody>
+//                         {productTotal}
+//                     </tbody>
 
-                </table>
+//                 </table>
 
-        </>
-    )
-}
+//         </>
+//     )
+// }
 
-const PageWB = ({ordersWB, deleteItemWB, setInfoOrder}) => {   
-    const Barcode = ({barcodeOrders}) => {
-        const options = {
-            value: `${barcodeOrders}`,
-            options: {
-              background: '#ffffff',
-              height: '50',
-              width: '2', 
-              display: 'flex',
-              justifyContent: 'center', 
-            }
-          };
-        const { inputRef } = useBarcode(options);
-      
-        return <svg className='barcode' ref={inputRef} style={  {
-            display: 'block',
-            margin: '0 auto',
-            textAlign: 'center'
-          }}/>;
-      };
-      console.log(ordersWB)
+ 
 
-    return(
-        <>
-               
-                <table className="list-order" id='list-order'>
-                    <thead>
-                        <tr className='list-order__item'>
-                            <th className='list-order__item'>№</th>
-                            <th className='list-order__item'>Номер отправления</th>
-                            <th className='list-order__item'>Наклейка</th>
-                            <th className='list-order__item date'><input type='date'/></th>
-                            <th className='art list-order__item'>Артикул</th> 
-                            <th className='list-order__item'>Кол-во шт.</th>
-                            <th className='list-order__item'>Склад</th>
-                            <th className='list-order__item'>Дейст.</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                      {ordersWB.map((order, i) => (
-                        <tr className={`${order.status === 'packed' ? 'list-order__item packed' : 'list-order__item'}`}
-                      
-                        key={order.id}   >
-                          <td className='list-order__item'>{i+1}</td>
-                          <td className='list-order__item posting-number'>
-                            <Barcode barcodeOrders={`WB${order.id}`} />
-                          </td>
-                          <td className='list-order__item'>{order.stickerId}</td>
-                          <td className='productName list-order__item'
-                                        onClick={() => {setInfoOrder(order.article)}}>{order.name}</td>
-                          <td className='list-order__item'>{order.article}</td>
-                          <td className='list-order__item'>1</td>
-                          <td className='warehouse list-order__item'>
-                            {order.warehouseId === 1088352 || order.warehouseId === 1129665 ? "Уткина заводь" : "Шушары"}
-                          </td>
-                          <td className='cross_item' onClick={(event) => { 
-                            event.stopPropagation(); // предотвращаем всплытие события
-                            deleteItemWB(order.id, order.stickerId)}}>x</td> 
-                        </tr>
-                      ))}
-                    </tbody>
-
-                
-                </table>
-            
-  
-
-        </>
-    )
-}
-
-const PageMega = ({ordersMega, setInfoOrder}) => {   
-  const Barcode = ({barcodeOrders}) => {
-      const options = {
-          value: `${barcodeOrders}`,
-          options: {
-            background: '#ffffff',
-            height: '50',
-            width: '2', 
-            display: 'flex',
-            justifyContent: 'center', 
-          }
-        };
-      const { inputRef } = useBarcode(options);
+// const PageMega = ({ordersMega, setInfoOrder}) => {   
+//   const Barcode = ({barcodeOrders}) => {
+//       const options = {
+//           value: `${barcodeOrders}`,
+//           options: {
+//             background: '#ffffff',
+//             height: '50',
+//             width: '2', 
+//             display: 'flex',
+//             justifyContent: 'center', 
+//           }
+//         };
+//       const { inputRef } = useBarcode(options);
     
-      return <svg className='barcode' ref={inputRef} style={  {
-          display: 'block',
-          margin: '0 auto',
-          textAlign: 'center'
-        }}/>;
-    };
-    console.log(ordersMega)
-    const {date} = ordersMega[0]
-  return(
-      <>
+//       return <svg className='barcode' ref={inputRef} style={  {
+//           display: 'block',
+//           margin: '0 auto',
+//           textAlign: 'center'
+//         }}/>;
+//     };
+//     console.log(ordersMega)
+//     const {date} = ordersMega[0]
+//   return(
+//       <>
              
-              <table className="list-order" id='list-order'>
-                  <thead>
-                      <tr className='list-order__item'>
-                          <th className='list-order__item'>№</th>
-                          <th className='list-order__item'>Номер отправления</th> 
-                          <th className='list-order__item date'>{`${date.slice(8, 10)}.${date.slice(5, 7)}.${date.slice(0, 4)}`}</th>
-                          <th className='art list-order__item'>Артикул</th> 
-                          <th className='list-order__item'>Кол-во шт.</th>
-                          <th className='list-order__item'>Склад</th>
-                          <th className='list-order__item'>Дейст.</th>
-                      </tr>
-                  </thead>
-                  <tbody>
-                    {ordersMega.map((order, i) => (
-                      <tr className={`${order.packed ? 'list-order__item packed' : 'list-order__item'}`}
-                      onClick={() => {console.log(order.article) 
-                        setInfoOrder(order.article)}}
-                      key={order.id}   >
-                        <td className='list-order__item'>{i+1}</td>
-                        <td className='list-order__item posting-number'>
-                          <Barcode barcodeOrders={`${order.orderId}`} />
-                        </td> 
-                        <td className='productName list-order__item'>{order.name}</td>
-                        <td className='list-order__item'>{order.article}</td>
-                        <td className='list-order__item'>1</td>
-                        <td className='warehouse list-order__item'>
-                          Самовывоз
-                        </td>
-                        <td className='cross_item' onClick={(event) => { 
-                          event.stopPropagation(); // предотвращаем всплытие события
-                          deleteItemWB(order.id, order.stickerId)}}>x</td> 
-                      </tr>
-                    ))}
-                  </tbody>
+//               <table className="list-order" id='list-order'>
+//                   <thead>
+//                       <tr className='list-order__item'>
+//                           <th className='list-order__item'>№</th>
+//                           <th className='list-order__item'>Номер отправления</th> 
+//                           <th className='list-order__item date'>{`${date.slice(8, 10)}.${date.slice(5, 7)}.${date.slice(0, 4)}`}</th>
+//                           <th className='art list-order__item'>Артикул</th> 
+//                           <th className='list-order__item'>Кол-во шт.</th>
+//                           <th className='list-order__item'>Склад</th>
+//                           <th className='list-order__item'>Дейст.</th>
+//                       </tr>
+//                   </thead>
+//                   <tbody>
+//                     {ordersMega.map((order, i) => (
+//                       <tr className={`${order.packed ? 'list-order__item packed' : 'list-order__item'}`}
+//                       onClick={() => {console.log(order.article) 
+//                         setInfoOrder(order.article)}}
+//                       key={order.id}   >
+//                         <td className='list-order__item'>{i+1}</td>
+//                         <td className='list-order__item posting-number'>
+//                           <Barcode barcodeOrders={`${order.orderId}`} />
+//                         </td> 
+//                         <td className='productName list-order__item'>{order.name}</td>
+//                         <td className='list-order__item'>{order.article}</td>
+//                         <td className='list-order__item'>1</td>
+//                         <td className='warehouse list-order__item'>
+//                           Самовывоз
+//                         </td>
+//                         <td className='cross_item' onClick={(event) => { 
+//                           event.stopPropagation(); // предотвращаем всплытие события
+//                           deleteItemWB(order.id, order.stickerId)}}>x</td> 
+//                       </tr>
+//                     ))}
+//                   </tbody>
 
               
-              </table>
+//               </table>
           
 
 
-      </>
-  )
-}
+//       </>
+//   )
+// }
 
 const PrintableContent = React.forwardRef((props, ref) => {
   const { article, postingNumber, name, photo, Column22, Column14, Column15, Column16, Column17, Column18, Column19, Column20 } = props;
@@ -746,46 +685,7 @@ const PrintableContent = React.forwardRef((props, ref) => {
       </Modal.Body>
     </div>
   );
-});
-
-const ModalOrder = ({ dataOrder, handleClose, show }) => {
-  const { article, postingNumber, name, photo, Column22, Column14, Column15, Column16, Column17, Column18, Column19, Column20 } = dataOrder;
-  
-  const printRef = useRef();
-
-  const handlePrint = useReactToPrint({
-    content: () => printRef.current,  // Передача ref правильно здесь
-    documentTitle: 'Order Details',
-  });
-
-  return (
-    <Modal size='lg' show={show} onHide={handleClose} aria-labelledby="example-modal-sizes-title-lg">
-      <PrintableContent
-        ref={printRef}  // Передаем ref здесь
-        article={article}
-        postingNumber={postingNumber}
-        name={name}
-        photo={photo}
-        Column22={Column22}
-        Column14={Column14}
-        Column15={Column15}
-        Column16={Column16}
-        Column17={Column17}
-        Column18={Column18}
-        Column19={Column19}
-        Column20={Column20}
-      />
-      <Modal.Footer>
-        <Button variant="secondary" onClick={handleClose}>
-          Закрыть
-        </Button>
-        <Button variant="primary" onClick={handlePrint}>
-          Печать
-        </Button>
-      </Modal.Footer>
-    </Modal>
-  );
-};
+}); 
 
 
  

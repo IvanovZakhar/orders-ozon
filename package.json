@@ -15,6 +15,7 @@
     "next-barcode": "^1.5.0",
     "pdf-lib": "^1.17.1",
     "react": "^18.2.0",
+    "react-barcode": "^1.6.1",
     "react-bootstrap": "^2.7.4",
     "react-dom": "^18.2.0",
     "react-pdf": "^7.7.0",

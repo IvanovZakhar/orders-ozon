@@ -169,7 +169,7 @@ useEffect(()=> {
           })
   
           
-        }else if(localStorage.nameCompany === 'Яндекс' || localStorage.nameCompany === 'Яндекс КГТ'|| localStorage.nameCompany === 'Яндекс МД'){
+        }else if(localStorage.nameCompany === 'Яндекс' || localStorage.nameCompany === 'Яндекс КГТ'|| localStorage.nameCompany === 'Яндекс МД' || localStorage.nameCompany === 'Яндекс КГТМД'){
           getAllOrdersYandex(localStorage.clientId).then(data => {
             const processOrders = data.filter(item => item.status === 'PROCESSING' && 
                                                       item.delivery.shipments[0].shipmentDate === `${localStorage.data.slice(8, 10)}-${localStorage.data.slice(5, 7)}-${localStorage.data.slice(0, 4)}`) 

@@ -61,13 +61,11 @@ const useOrderService = () => {
  
     const getAllOrdersYandex = async (clientId) => { 
       
-        const res = await request(`https://ced1fd25fcf8.vps.myjino.ru:49191/yandex-orders/${clientId}`, 'GET');
-        console.log(res) 
+        const res = await request(`https://ced1fd25fcf8.vps.myjino.ru:49191/yandex-orders/${clientId}`, 'GET'); 
         return res
     }
 
-    const getStickersOrdersYandex = async (orderId, campaignId) => { 
-        console.log(orderId)
+    const getStickersOrdersYandex = async (orderId, campaignId) => {  
         const res = await request(`https://ced1fd25fcf8.vps.myjino.ru:49191/yandex-stickers/${campaignId}/${orderId}`, 'GET', null, {'Content-Type': 'application/pdf'}, false); 
         return res
     }
@@ -75,8 +73,7 @@ const useOrderService = () => {
     const getAllOrdersWB = async (dateFrom, dateTo, apiKey) => { 
         const unixDateFrom = getNewDate(dateFrom)
         const unixDateTo = getNewDate(dateTo)
-        const res = await request(`https://ced1fd25fcf8.vps.myjino.ru:49191/wb-orders/${unixDateFrom}/${unixDateTo}`, 'GET', null );
-         console.log(res)
+        const res = await request(`https://ced1fd25fcf8.vps.myjino.ru:49191/wb-orders/${unixDateFrom}/${unixDateTo}`, 'GET', null ); 
         return res.orders
     }
 
@@ -86,15 +83,13 @@ const useOrderService = () => {
             "dateTo": `${dateTo}`,
             "apiKey": `${apiKey}`
           }
-        const res = await request(`https://ced1fd25fcf8.vps.myjino.ru:49191/megamarket-ordersdate`, 'POST', JSON.stringify(body) );
-       console.log(res)
+        const res = await request(`https://ced1fd25fcf8.vps.myjino.ru:49191/megamarket-ordersdate`, 'POST', JSON.stringify(body) ); 
         return res.data.shipments
     }
 
 
     const updateOzonOrders = async (newDate) => {  
-       const res = await request(`https://ced1fd25fcf8.vps.myjino.ru:49191/newdate-ozon-orders`, 'POST', JSON.stringify(newDate) );
-        console.log(res)
+       const res = await request(`https://ced1fd25fcf8.vps.myjino.ru:49191/newdate-ozon-orders`, 'POST', JSON.stringify(newDate) ); 
        return res
    }
 
@@ -106,8 +101,7 @@ const useOrderService = () => {
     const getAllOrdersWBCMA = async (dateFrom, dateTo, apiKey) => { 
         const unixDateFrom = getNewDate(dateFrom)
         const unixDateTo = getNewDate(dateTo)
-        const res = await request(`https://ced1fd25fcf8.vps.myjino.ru:49191/wbcma-orders/${unixDateFrom}/${unixDateTo}`, 'GET', null );
-         console.log(res)
+        const res = await request(`https://ced1fd25fcf8.vps.myjino.ru:49191/wbcma-orders/${unixDateFrom}/${unixDateTo}`, 'GET', null ); 
         return res.orders
     }
     const getStickersWBCMA = async (apiKey, body) => {   
@@ -118,8 +112,7 @@ const useOrderService = () => {
     const getAllOrdersWBArsenal = async (dateFrom, dateTo, apiKey) => { 
         const unixDateFrom = getNewDate(dateFrom)
         const unixDateTo = getNewDate(dateTo)
-        const res = await request(`https://ced1fd25fcf8.vps.myjino.ru:49191/wbarsenal-orders/${unixDateFrom}/${unixDateTo}`, 'GET', null );
-         console.log(res)
+        const res = await request(`https://ced1fd25fcf8.vps.myjino.ru:49191/wbarsenal-orders/${unixDateFrom}/${unixDateTo}`, 'GET', null ); 
         return res.orders
     } 
  
@@ -127,19 +120,16 @@ const useOrderService = () => {
     const getAllOrdersWBMD = async (dateFrom, dateTo, apiKey) => { 
         const unixDateFrom = getNewDate(dateFrom)
         const unixDateTo = getNewDate(dateTo)
-        const res = await request(`https://ced1fd25fcf8.vps.myjino.ru:49191/wbmd-orders/${unixDateFrom}/${unixDateTo}`, 'GET', null );
-         console.log(res)
+        const res = await request(`https://ced1fd25fcf8.vps.myjino.ru:49191/wbmd-orders/${unixDateFrom}/${unixDateTo}`, 'GET', null ); 
         return res.orders
     }
     const getStickersWBMD = async (apiKey, body) => {   
-        const res = await request(`https://ced1fd25fcf8.vps.myjino.ru:49191/wbmd-stickers`, 'POST', body); 
-        console.log(res.stickers)
+        const res = await request(`https://ced1fd25fcf8.vps.myjino.ru:49191/wbmd-stickers`, 'POST', body);  
         return res.stickers
     }
 
     const getStickersWBArsenal = async (apiKey, body) => {   
-        const res = await request(`https://ced1fd25fcf8.vps.myjino.ru:49191/wbarsenal-stickers`, 'POST', body); 
-        console.log(res.stickers)
+        const res = await request(`https://ced1fd25fcf8.vps.myjino.ru:49191/wbarsenal-stickers`, 'POST', body);  
         return res.stickers
     }
 
@@ -208,6 +198,7 @@ const useOrderService = () => {
     }
  
     const transformProduct = (product) => { 
+        console.log(product.shipment_date )
         return{
             postingNumber: product.posting_number,
             date: product.shipment_date,
@@ -216,7 +207,8 @@ const useOrderService = () => {
             productPrice: product.products[0].price,
             quantity: product.products[0].quantity,
             warehouse: product.delivery_method.warehouse,
-            deliveryDate: product.deliveryDate ? product.deliveryDate : null
+            deliveryDate: product.deliveryDate ? product.deliveryDate : null,
+            shipmentDate: product.shipment_date ? product.shipment_date : null
         } 
      }
 

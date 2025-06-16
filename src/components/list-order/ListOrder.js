@@ -20,7 +20,7 @@ import OrderTableWB from './components/OrderTableWB';
 import PageOZN from './components/PageOZN';
 
 const ListOrder = ({allProducts, props, setAllOrders, onLoadingProducts, date, setDate, headersOzon, ordersWB,  setOrdersWB,stickersWB,  setStickersWB, productsForOrdersBarcode, ordersMega}) => { 
-    console.log(props)
+ 
     const {getLabelOzon, getStickersOrdersYandex, updateProductQuantity, loading, getPhotoProducts, updateOzonOrders} = useOrderService()
     const [labels, setLabels] = useState();
     const [name, setName] = useState('')
@@ -152,9 +152,9 @@ const ListOrder = ({allProducts, props, setAllOrders, onLoadingProducts, date, s
             productPrice,
             quantity,
             warehouse, 
-            status, deliveryDate} = item;   
-            const statusPacked =  deliveryDate  ? 'awaiting_packed': null 
-            console.log(date)  
+            status, deliveryDate, shipmentDate} = item;   
+            const statusPacked =  deliveryDate  ? 'awaiting_packed': null  
+            console.log(shipmentDate)
             return(
                     <tr 
                       className={`list-order__item ${status} ${statusPacked}`} 

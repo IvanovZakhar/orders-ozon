@@ -8,7 +8,9 @@ const PageOZN = ({
   props,
   errorInput,
   dateInput,
+  shipmentDate
 }) => {
+  console.log(props)
   return (
     <>
       <table className="list-order" id="list-order">
